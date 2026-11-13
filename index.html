@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UNITY</title>
+<title>HAMWE</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#161719">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -224,21 +224,240 @@ dialog h2{font-size:20px}
 @media (prefers-reduced-motion: reduce){#toast,.rail,.rlbl{transition:none}}
 .empty{color:var(--muted);font-size:14px;padding:6px 0}
 hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
+
+/* ===== 1.2: two layers. Outer field holds the name and the rail; the inner panel holds everything else. ===== */
+:root{--outer:linear-gradient(155deg,#d6dce8 0%,#e5e1dc 52%,#e4d6c2 100%);--inner:rgba(255,255,255,.44);--card:#ffffff;--railw:76px;
+  --shadow:0 1px 2px rgba(20,22,26,.04),0 14px 30px -22px rgba(20,22,26,.28)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--outer:linear-gradient(155deg,#0e0f11 0%,#131417 55%,#17130e 100%);--inner:rgba(255,255,255,.045);--card:#25262a;--shadow:0 1px 0 rgba(255,255,255,.04) inset,0 16px 32px -24px rgba(0,0,0,.85)}}
+:root[data-theme="dark"]{--outer:linear-gradient(155deg,#0e0f11 0%,#131417 55%,#17130e 100%);--inner:rgba(255,255,255,.045);--card:#25262a;--shadow:0 1px 0 rgba(255,255,255,.04) inset,0 16px 32px -24px rgba(0,0,0,.85)}
+[hidden]{display:none !important}
+body{background:radial-gradient(900px 520px at 92% -6%,color-mix(in srgb,var(--c-ai) 16%,transparent),transparent 70%),radial-gradient(760px 520px at 0% 100%,color-mix(in srgb,var(--c-str) 16%,transparent),transparent 70%),var(--outer);background-attachment:fixed}
+.card,.stat,details.grp{background:var(--card)}
+.banner:not(.warn){background:var(--card)}
+.top{border-bottom:0}
+main[data-view="home"]{max-width:1440px}
+.ibtn{position:relative}
+.ibtn .badge{position:absolute;top:-6px;right:-6px}
+.rbrand{display:none}
+.attn-panel{position:fixed;top:24px;right:24px;bottom:24px;width:min(390px,calc(100vw - 48px));z-index:35;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:-24px 0 70px -34px rgba(0,0,0,.55);padding:18px 20px;display:flex;flex-direction:column;gap:4px;overflow:auto;animation:slidein .18s ease}
+@keyframes slidein{from{transform:translateX(28px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.attn-panel{animation:none}.app{transition:none !important}}
+
+/* home */
+.hero{min-height:310px;background:linear-gradient(130deg,color-mix(in srgb,var(--tc,var(--accent)) 20%,var(--card)),var(--card) 64%);-webkit-backdrop-filter:none;backdrop-filter:none}
+.after{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:6px}
+.nx{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.nx i{width:8px;height:8px;border-radius:50%;background:var(--tc)}
+.clamp1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.tmini{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:color-mix(in srgb,var(--tc) 6%,transparent);font:inherit;color:inherit;min-width:0}
+.tmini:hover{border-color:var(--tc)}
+.tmini .big{font-size:27px}
+.rq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;font-size:13.5px;padding:5px 0;border-top:1px solid var(--line)}
+.rev .row{margin-top:auto}
+@media (min-width:700px){.dash>.wk,.dash>.rev{grid-column:span 6}}
+@media (min-width:1100px){
+  .dash>.hero{grid-column:span 7}.dash>.tracks{grid-column:span 5}
+  .dash>.cons{grid-column:span 5}.dash>.wk{grid-column:span 4}.dash>.rev{grid-column:span 3}
+}
+
+@media (min-width:900px){
+  body{overflow:hidden}
+  .app{display:grid;grid-template-columns:var(--railw) minmax(0,1fr);height:100vh;padding-left:0;transition:grid-template-columns .2s ease .06s}
+  .app:has(.rail:hover:not(.shut)),.app:has(.rail :focus-visible){--railw:236px}
+  .app .rail,.app .rail:hover{position:relative;left:auto;top:auto;bottom:auto;width:auto;height:100vh;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;border:0;box-shadow:none;padding:16px 14px;gap:6px}
+  .rbrand{display:flex;flex-direction:column;align-items:center;gap:1px;width:48px;border:0;background:none;padding:0;margin-bottom:14px;color:var(--ink)}
+  .rbrand i{position:relative;width:48px;height:44px;flex:none}
+  .rbrand i::before{content:"";position:absolute;left:7px;top:5px;width:34px;height:34px;border-radius:11px;background:var(--pri)}
+  .rbrand i::after{content:"";position:absolute;left:19px;top:17px;width:10px;height:10px;border-radius:50%;background:var(--on-pri)}
+  .rbrand b{font-size:9.5px;font-weight:700;letter-spacing:.2em;padding-left:.2em}
+  .ritem{width:100%}
+  .ritem:hover,.ritem[aria-current="page"]{background:var(--inner)}
+  .inner{margin:12px 12px 12px 0;height:calc(100vh - 24px);border-radius:26px;background:var(--inner);border:1px solid var(--line);-webkit-backdrop-filter:blur(26px) saturate(1.3);backdrop-filter:blur(26px) saturate(1.3);overflow-y:auto;overflow-x:hidden}
+  .top{background:none;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);padding:0 26px;height:66px;border-radius:26px 26px 0 0}
+  .top .brand{display:none}
+  .tabs{margin-left:0}
+  main{padding:10px 26px 40px}
+}
+@media (min-width:1100px){
+  main[data-view="home"]{max-width:none}
+  .dash{min-height:calc(100vh - 142px);grid-template-rows:minmax(min-content,1.25fr) minmax(min-content,1fr)}
+  .heat{max-width:470px}
+  .hero h1{font-size:34px}
+}
+
+/* ===== 1.3: centred top bar, Today page, topic icons ===== */
+.eyebrow{display:flex;align-items:center;gap:7px}
+.today-head{display:flex;gap:20px;align-items:center}
+.cal{flex:none;width:104px;height:114px;border-radius:20px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.cal-m{width:100%;text-align:center;background:#d24b3e;color:#fff;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 0 4px}
+.cal-d{font-size:46px;font-weight:700;letter-spacing:-.03em;line-height:1.08;margin-top:5px}
+.cal-w{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.12em}
+.th-text{display:flex;flex-direction:column;gap:6px;min-width:0}
+.th-text h2{font-size:30px}
+.th-text .hint{font-size:14px;color:var(--ink);display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:2px}
+.today-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;flex:1}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);min-width:0}
+.nu-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;flex:1}
+.tgroup{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:700px){.tgroup{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card.tk{box-shadow:none;border-radius:15px;background:color-mix(in srgb,var(--tc) 6%,transparent);padding:15px 16px;gap:8px}
+.tk h3{font-size:15.5px}
+.tk .row{margin-top:auto;padding-top:4px}
+.tk .chip{display:flex;align-items:center;gap:6px}
+.bulb{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:var(--warn-bg);color:var(--warn);flex:none}
+.irow{font-size:13.5px;padding:8px 0;border-top:1px solid var(--line)}
+.ideas-p .tail{margin-top:auto;display:flex;flex-direction:column;gap:2px;align-items:flex-start;border-top:1px solid var(--line);padding-top:10px}
+@media (min-width:800px){.nu-grid{grid-template-columns:minmax(0,1fr) 250px}}
+@media (min-width:900px){
+  .top{display:grid;grid-template-columns:1fr auto 1fr}
+  .tabs{grid-column:2}
+  .topmeta{grid-column:3}
+}
+@media (min-width:1100px){
+  main[data-view="today"]{max-width:none;min-height:calc(100vh - 92px)}
+  .today-grid{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+}
+@media (max-width:600px){.cal{width:84px;height:96px}.cal-d{font-size:36px}.th-text h2{font-size:23px}}
+
+/* ===== 1.4: hand-drawn illustrations, Week page ===== */
+.sk{position:relative;flex:none;width:66px;height:66px;color:var(--ink)}
+.sk svg{width:100%;height:100%;overflow:visible;display:block}
+.sk-m{position:absolute;left:0;right:0;top:14.5px;text-align:center;font-size:8px;font-weight:700;letter-spacing:.18em;padding-left:.18em;color:#fff;text-transform:uppercase;line-height:1}
+.sk-d{position:absolute;left:0;right:0;top:27px;text-align:center;font-size:23px;font-weight:700;letter-spacing:-.03em;line-height:1.2}
+.today-head{gap:16px}
+.wkpage>*{grid-column:span 12}
+.dstack{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;flex:1;min-height:200px}
+.dcol{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--muted)}
+.dwrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;min-height:120px;border-radius:9px;background:var(--sunk)}
+.dbar{width:100%;display:flex;flex-direction:column-reverse;border-radius:9px;overflow:hidden}
+.dbar i{display:block;background:var(--tc);flex:var(--m) 0 0;min-height:2px}
+.dcol b{font-weight:500}
+.dcol.now b{color:var(--ink);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:3px;background:var(--tc)}
+.wkrow.cur span:first-child{font-weight:700}
+.scroll{overflow:auto;min-height:0;flex:1}
+@media (min-width:700px){.wkpage>.wk-a,.wkpage>.wk-c{grid-column:span 6}}
+@media (min-width:1100px){
+  main[data-view="week"]{max-width:none;min-height:calc(100vh - 92px)}
+  .dash.wkpage{min-height:0;flex:1;grid-template-rows:minmax(300px,auto) minmax(220px,1fr)}
+  .wkpage>.wk-a{grid-column:span 4}.wkpage>.wk-b{grid-column:span 5}.wkpage>.wk-c{grid-column:span 3}
+  .wkpage>.wk-d{grid-column:span 8}.wkpage>.wk-e{grid-column:span 4}
+}
+
+/* ===== 1.5: Plan page: folder tabs, three-view summary, stage board ===== */
+.ftabs{display:flex;gap:4px;align-items:flex-end;padding:0 14px;overflow-x:auto;scrollbar-width:none;margin-bottom:-17px;position:relative;z-index:1}
+.ftabs::-webkit-scrollbar{display:none}
+.ftab{display:flex;align-items:center;gap:8px;flex:none;border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;padding:9px 16px 10px;background:var(--inner);color:var(--muted);font-size:14px;font-weight:500;white-space:nowrap}
+.ftab svg{color:var(--tc)}
+.ftab:hover{color:var(--ink)}
+.ftab[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:600;padding-top:8px;box-shadow:inset 0 3px 0 var(--tc);padding-bottom:12px}
+.folder{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow);min-width:0;flex:1}
+.seg{display:flex;background:var(--sunk);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 13px;border-radius:9px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.psum{display:flex;flex-direction:column;gap:14px;min-width:0}
+.psum .stat{background:var(--sunk);border-color:transparent}
+.pd2{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.nextbox{border:1px solid var(--line);border-radius:15px;padding:15px 16px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--tc) 6%,transparent)}
+.sbars{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.sbars .wkrow{grid-template-columns:minmax(120px,1.1fr) 2fr 92px}
+.road{display:flex;overflow-x:auto;padding:4px 2px 8px}
+.step{flex:1 0 176px;position:relative;padding-right:16px;display:flex;flex-direction:column;gap:8px}
+.step::before{content:"";position:absolute;top:16px;left:40px;right:4px;height:2px;border-radius:1px;background:var(--line)}
+.step:last-child::before{display:none}
+.step.done::before{background:var(--tc)}
+.node{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;border:2px solid var(--line);background:var(--card);color:var(--muted);position:relative}
+.step.done .node{background:var(--tc);border-color:var(--tc);color:var(--card)}
+.step.cur .node{border-color:var(--tc);color:var(--tc);box-shadow:0 0 0 4px color-mix(in srgb,var(--tc) 18%,transparent)}
+.step b{font-size:14px;line-height:1.25}
+.step .bar{max-width:150px}
+pre.md{margin:0;font:12.5px/1.6 var(--mono);max-height:340px;overflow:auto;background:var(--sunk);border-radius:13px;padding:14px 16px;white-space:pre-wrap;word-break:break-word}
+.board{display:flex;gap:12px;overflow-x:auto;align-items:flex-start;padding-bottom:8px;min-width:0}
+.col{flex:1 0 330px;max-width:520px;min-width:0;border-radius:17px;background:var(--sunk);padding:10px;display:flex;flex-direction:column;gap:8px;border:1px solid transparent}
+.col.cur{border-color:color-mix(in srgb,var(--tc) 55%,transparent)}
+.col-h{display:flex;flex-direction:column;gap:8px;padding:4px 6px 2px}
+.col-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border:0;background:none;padding:0;text-align:left;width:100%;color:var(--ink)}
+.col-n{font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+.col.shut{flex:0 0 54px;max-width:54px;align-self:stretch;min-height:150px}
+.col.shut .col-t{writing-mode:vertical-rl;justify-content:flex-start;gap:12px;align-items:center;white-space:nowrap}
+.col.shut .bar{display:none}
+.col details.grp{border-radius:13px;box-shadow:none}
+.col details.grp>summary{padding:10px 13px;font-size:13.5px}
+.col details.item>summary{padding:9px 13px}
+.col .item .acts{padding:4px 13px 12px 13px}
+@media (min-width:900px){.pd2{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}}
+@media (min-width:1100px){main[data-view="plan"]{max-width:none;min-height:calc(100vh - 92px)}}
+@media (max-width:700px){
+  .board{flex-direction:column;overflow:visible}
+  .col,.col.shut{flex:none;width:100%;max-width:none;min-height:0}
+  .col.shut .col-t{writing-mode:horizontal-tb;justify-content:space-between}
+  .folder{padding:14px}
+  .seg button{padding:6px 9px}
+}
+
+/* ===== 1.6: floating top bar, Ideas and Proof pages ===== */
+@media (min-width:900px){
+  .top{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
+  .top>*{pointer-events:auto}
+  .tabs{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px;box-shadow:var(--shadow)}
+  .tabs button{padding:7px 12px}
+  .top .ibtn,.top .pill{background:var(--card);box-shadow:var(--shadow)}
+  .top .ibtn:hover{border-color:var(--muted)}
+  .wkmeta{background:var(--card);border:1px solid var(--line);border-radius:19px;height:38px;padding:0 14px;box-shadow:var(--shadow);margin-right:0}
+}
+.hsteps{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:13px;color:var(--muted)}
+.hsteps span{display:flex;align-items:center;gap:8px}
+.hn{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);color:var(--ink);font-size:11.5px;font-weight:700}
+.ilist{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;align-content:start}
+.icard{border:1px solid var(--line);border-radius:14px;padding:13px 14px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--warn) 6%,transparent);min-width:0}
+.icard .row{margin-top:auto}
+.icard.q{background:none}
+.capbar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px 28px}
+.capbar form{flex:1 1 380px}
+.capbar input{padding:12px 14px;font-size:15px}
+.idpage>*,.prpage>*{grid-column:span 12}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-content:start}
+.pr-b{display:flex;flex-direction:column;gap:16px}
+.prow label{color:var(--ink);font-size:14.5px;flex-direction:row;justify-content:space-between;gap:8px}
+@media (min-width:1100px){
+  main[data-view="ideas"],main[data-view="proof"]{max-width:none;min-height:calc(100vh - 92px)}
+  .dash.idpage{min-height:0;flex:1;grid-template-rows:auto minmax(260px,1fr)}
+  .idpage>.id-a{grid-column:span 6}.idpage>.id-b,.idpage>.id-c{grid-column:span 3}
+  .dash.prpage{min-height:0;grid-template-rows:none}
+  .prpage>.pr-a{grid-column:span 8}.prpage>.pr-b{grid-column:span 4}
+}
+@media (min-width:1100px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="rail" id="rail" aria-label="Home and tracks"></aside>
-  <header class="top"><button class="brand" data-act="view" data-v="home" aria-label="UNITY home"><i></i>UNITY</button><nav class="tabs" id="nav" aria-label="Views"></nav><div class="topmeta" id="topmeta"></div></header>
-  <main id="main"></main>
+  <div class="inner" id="inner">
+    <header class="top"><button class="brand" data-act="view" data-v="home" aria-label="HAMWE home"><i></i>HAMWE</button><nav class="tabs" id="nav" aria-label="Views"></nav><div class="topmeta" id="topmeta"></div></header>
+    <main id="main"></main>
+  </div>
+  <aside class="attn-panel" id="attn" aria-label="Needs attention" hidden></aside>
   <nav class="bnav" id="bnav" aria-label="Sections"></nav>
 </div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter></svg>
 <dialog id="dlg"></dialog>
 <div id="toast" role="status"></div>
 <script>
 "use strict";
 const SEED = {"tracks":[{"id":"sw","name":"Software","short":"SW","target":20},{"id":"str","name":"Structural","short":"STR","target":10},{"id":"ai","name":"AI","short":"AI","target":4},{"id":"ent","name":"Entrepreneurship","short":"ENT","target":3},{"id":"rev","name":"Review","short":"REV","target":3,"recurring":true,"label":"Review block: flashcards, weekly review, spaced re-quiz"},{"id":"build","name":"Chama build","short":"BLD","target":0}],"items":[{"id":"FSE.C01.M01","tr":"sw","t":"Ubuntu dev environment & toolchains (uv, Node LTS, Docker, PostgreSQL, editor)","h":5.0,"g":"Stage 1 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":10},{"id":"FSE.C01.M02","tr":"sw","t":"Git & GitHub workflow (branches, PRs, reviews, commit signing, gh CLI)","h":3.5,"g":"Stage 1 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":20},{"id":"FSE.C01.M03","tr":"sw","t":"The learning system: AI modes, logs, Anki, explain-backs","h":1.5,"g":"Stage 1 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":30},{"id":"FSE.C02.M01","tr":"sw","t":"Core refresh: types, functions, collections, comprehensions","h":5.0,"g":"Stage 1 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":40},{"id":"FSE.C02.M02","tr":"sw","t":"Errors, pytest basics and uv project layout","h":2.5,"g":"Stage 1 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":50},{"id":"FSE.C02.M03","tr":"sw","t":"Text & data processing: CSV/PDF extraction, regex, Decimal, dates and time zones","h":3.5,"g":"Stage 1 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":60},{"id":"FSE.C11.M01","tr":"sw","t":"Complexity, arrays, strings, hash maps","h":7.0,"g":"Stage 1 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":70},{"id":"FSE.C11.M02","tr":"sw","t":"Stacks, queues, linked lists, recursion","h":7.0,"g":"Stage 1 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":80},{"id":"FSE.C11.M10","tr":"sw","t":"Rolling Mode 0 practice reps (spaced problem sets)","h":22.5,"g":"Stage 1 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":90},{"id":"FSE.C03.M01","tr":"sw","t":"Relational modelling, normalisation and SQL essentials","h":4.5,"g":"Stage 1 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":100},{"id":"FSE.C03.M02","tr":"sw","t":"Money handling and double-entry ledger design","h":5.0,"g":"Stage 1 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":110},{"id":"FSE.C03.M03","tr":"sw","t":"Reconciliation and import pipelines (idempotent imports, matching, audit trails)","h":4.5,"g":"Stage 1 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":120},{"id":"FSE.C04.M01","tr":"sw","t":"JavaScript essentials: values, closures, modules, async/await","h":2.5,"g":"Stage 1 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":130},{"id":"FSE.C04.M02","tr":"sw","t":"TypeScript essentials: types, unions, narrowing, generics basics, strict mode","h":3.25,"g":"Stage 1 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":140},{"id":"FSE.C04.M03","tr":"sw","t":"HTML, CSS layout, responsive design and accessibility essentials","h":4.25,"g":"Stage 1 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":150},{"id":"FSE.C05.M01","tr":"sw","t":"Django essentials: project structure, models/ORM, admin","h":3.5,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":160},{"id":"FSE.C05.M02","tr":"sw","t":"DRF: serializers, viewsets, authentication and permissions","h":4.25,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":170},{"id":"FSE.C05.M03","tr":"sw","t":"Background work: Django Tasks API with a database-backed worker; scheduling","h":2.25,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":180},{"id":"FSE.C05.M10","tr":"sw","t":"Django security settings and auth (allauth, sessions vs tokens, CSP)","h":3.5,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":190},{"id":"FSE.C05.M12","tr":"sw","t":"Server-rendered Django: templates, forms, messages, HTMX partials","h":3.5,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":200},{"id":"FSE.C08.M01","tr":"sw","t":"Test strategy and API tests (pytest, pytest-django, DRF)","h":2.5,"g":"Stage 1 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":210},{"id":"FSE.C12.M01","tr":"sw","t":"Modular monolith, DDD-lite and module contracts","h":3.5,"g":"Stage 1 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":220},{"id":"FSE.C12.M02","tr":"sw","t":"Multi-tenancy models and trade-offs (incl. Postgres row-level security)","h":3.0,"g":"Stage 1 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":230},{"id":"FSE.C06.M01","tr":"sw","t":"React core mental model","h":2.5,"g":"Stage 1 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":240},{"id":"FSE.C09.M01","tr":"sw","t":"Docker and Compose, twelve-factor config, HTTPS, first deploy and backups","h":4.25,"g":"Stage 1 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":250},{"id":"FSE.C09.M03","tr":"sw","t":"Backups, restore drills and production PostgreSQL","h":4.0,"g":"Stage 1 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":260},{"id":"FSE.C10.M01","tr":"sw","t":"Security foundations: OWASP Top 10 and secure defaults for API and mobile","h":2.5,"g":"Stage 1 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":270},{"id":"FSE.C10.M02","tr":"sw","t":"AuthN/AuthZ, RBAC, tenant isolation and audit logging","h":4.0,"g":"Stage 1 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":280},{"id":"FSE.C01.M05","tr":"sw","t":"Debugging & reading docs/errors across Python, Django and React Native","h":3.5,"g":"Stage 2 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":290},{"id":"FSE.C02.M04","tr":"sw","t":"Iterators, generators, decorators, context managers","h":6.0,"g":"Stage 2 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":300},{"id":"FSE.C02.M05","tr":"sw","t":"Typing in depth: generics, protocols, dataclasses, Pydantic","h":6.0,"g":"Stage 2 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":310},{"id":"FSE.C11.M03","tr":"sw","t":"Sorting and searching","h":7.0,"g":"Stage 2 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":320},{"id":"FSE.C11.M04","tr":"sw","t":"Trees, binary search trees, heaps","h":7.0,"g":"Stage 2 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":330},{"id":"FSE.C03.M04","tr":"sw","t":"Indexes, query plans, transactions and isolation","h":5.0,"g":"Stage 2 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":340},{"id":"FSE.C04.M04","tr":"sw","t":"TypeScript depth: generics, utility and conditional types, Zod contracts","h":3.25,"g":"Stage 2 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":350},{"id":"FSE.C05.M04","tr":"sw","t":"API design: REST, OpenAPI, versioning, pagination, filtering, idempotency","h":3.5,"g":"Stage 2 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":360},{"id":"FSE.C05.M05","tr":"sw","t":"Files, object storage, PDF/reports, caching","h":3.5,"g":"Stage 2 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":370},{"id":"FSE.C05.M07","tr":"sw","t":"Multi-tenancy with django-tenants and module entitlements","h":3.0,"g":"Stage 2 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":380},{"id":"FSE.C08.M03","tr":"sw","t":"Code review, including AI-written pull requests; seeded-defect drills","h":3.5,"g":"Stage 2 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":390},{"id":"FSE.C08.M04","tr":"sw","t":"End-to-end web testing with Playwright","h":3.5,"g":"Stage 2 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":400},{"id":"FSE.C08.M05","tr":"sw","t":"Static analysis, typing as tests, and refactoring","h":3.0,"g":"Stage 2 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":410},{"id":"FSE.C12.M03","tr":"sw","t":"Integration patterns: webhooks, queues, retries, idempotency, outbox","h":4.0,"g":"Stage 2 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":420},{"id":"FSE.C12.M04","tr":"sw","t":"ADRs, event-driven basics, caching and scaling","h":3.5,"g":"Stage 2 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":430},{"id":"FSE.C06.M02","tr":"sw","t":"React for the web with Vite and TypeScript; routing","h":3.5,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":440},{"id":"FSE.C06.M03","tr":"sw","t":"Server state with TanStack Query; forms and validation with Zod","h":3.5,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":450},{"id":"FSE.C06.M04","tr":"sw","t":"Design systems, component libraries, i18n (English/Swahili), accessibility","h":3.25,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":460},{"id":"FSE.C06.M05","tr":"sw","t":"Frontend testing (Vitest, Testing Library) and performance (React Compiler)","h":3.5,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":470},{"id":"FSE.C09.M02","tr":"sw","t":"CI/CD with GitHub Actions; environments; migrations in pipelines","h":4.0,"g":"Stage 2 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":480},{"id":"FSE.C09.M04","tr":"sw","t":"Observability: logs, metrics, traces, error tracking","h":4.5,"g":"Stage 2 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":490},{"id":"FSE.C10.M03","tr":"sw","t":"Threat modelling (STRIDE-lite) and ASVS Level 1","h":3.5,"g":"Stage 2 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":500},{"id":"FSE.C10.M04","tr":"sw","t":"Supply chain, secrets, and agent/LLM risks","h":3.5,"g":"Stage 2 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":510},{"id":"FSE.C10.M05","tr":"sw","t":"Privacy engineering under the Kenya Data Protection Act","h":4.0,"g":"Stage 2 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":520},{"id":"FSE.C01.M04","tr":"sw","t":"Linux & CLI depth (shell scripting, processes, permissions, systemd, ssh)","h":4.5,"g":"Stage 3 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":530},{"id":"FSE.C01.M06","tr":"sw","t":"Networking tools for developers (DNS, TLS, curl, mtr, latency measurement)","h":2.5,"g":"Stage 3 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":540},{"id":"FSE.C02.M06","tr":"sw","t":"The object model and data model (dunder methods, descriptors, composition)","h":7.0,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":550},{"id":"FSE.C02.M07","tr":"sw","t":"Concurrency: threads, processes, asyncio; free-threading awareness","h":7.0,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":560},{"id":"FSE.C02.M08","tr":"sw","t":"Standard library tour and performance (profiling, complexity in Python)","h":5.5,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":570},{"id":"FSE.C02.M09","tr":"sw","t":"Packaging and tooling (pyproject, ruff, type checkers, pre-commit hooks)","h":3.5,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":580},{"id":"FSE.C02.M10","tr":"sw","t":"Data analysis and visualisation for products (pandas, Matplotlib); builds on STRUCTURES V01.M10 numerics","h":5.0,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":590},{"id":"FSE.C11.M05","tr":"sw","t":"Graphs: BFS/DFS, shortest paths","h":8.0,"g":"Stage 3 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":600},{"id":"FSE.C11.M06","tr":"sw","t":"Dynamic programming (working depth)","h":7.0,"g":"Stage 3 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":610},{"id":"FSE.C03.M05","tr":"sw","t":"Advanced SQL: window functions, CTEs, reporting queries","h":5.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":620},{"id":"FSE.C03.M06","tr":"sw","t":"Migrations, schema evolution and data quality","h":4.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":630},{"id":"FSE.C03.M07","tr":"sw","t":"PostgreSQL operations (roles, backups, PITR, pooling, extensions incl. pgvector)","h":5.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":640},{"id":"FSE.C03.M08","tr":"sw","t":"SQLite on device and sync-friendly schemas","h":4.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":650},{"id":"FSE.C04.M05","tr":"sw","t":"JavaScript in depth: event loop, prototypes, iterators, performance","h":4.5,"g":"Stage 3 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":660},{"id":"FSE.C04.M06","tr":"sw","t":"HTTP and the browser: fetch, CORS, cookies, caching, security headers, CSP","h":4.5,"g":"Stage 3 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":670},{"id":"FSE.C04.M07","tr":"sw","t":"Tooling: Node, package managers, Vite, linters/formatters, monorepos","h":3.5,"g":"Stage 3 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":680},{"id":"FSE.C05.M06","tr":"sw","t":"Webhooks and payment callbacks (Daraja patterns)","h":4.5,"g":"Stage 3 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":690},{"id":"FSE.C05.M08","tr":"sw","t":"ORM depth: query optimisation, N+1, transactions, row locking","h":5.5,"g":"Stage 3 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":700},{"id":"FSE.C05.M09","tr":"sw","t":"FastAPI for AI and lightweight services","h":5.5,"g":"Stage 3 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":710},{"id":"FSE.C08.M02","tr":"sw","t":"Fixtures, factories and property-based tests (Hypothesis) for ledgers","h":3.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":720},{"id":"FSE.C08.M06","tr":"sw","t":"Contract and schema tests (OpenAPI)","h":3.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":730},{"id":"FSE.C08.M07","tr":"sw","t":"TDD practice (Mode 0 katas)","h":4.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":740},{"id":"FSE.C08.M08","tr":"sw","t":"Mobile testing and test-data management","h":3.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":750},{"id":"FSE.C12.M05","tr":"sw","t":"Offline-first and local-first: sync engines, CRDTs, conflict resolution","h":5.5,"g":"Stage 3 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":760},{"id":"FSE.C12.M06","tr":"sw","t":"ERP case studies: Frappe/ERPNext and others (comparative)","h":4.5,"g":"Stage 3 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":770},{"id":"FSE.C12.M07","tr":"sw","t":"The module factory pattern (templates, code generation, entitlements)","h":4.5,"g":"Stage 3 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":780},{"id":"FSE.C06.M06","tr":"sw","t":"Application architecture and client state management","h":4.5,"g":"Stage 3 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":790},{"id":"FSE.C06.M07","tr":"sw","t":"Dashboards and data visualisation for PMO reporting","h":4.5,"g":"Stage 3 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":800},{"id":"FSE.C06.M08","tr":"sw","t":"Auth flows in SPAs (sessions, CSRF, passkeys UX)","h":3.5,"g":"Stage 3 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":810},{"id":"FSE.C07.M01","tr":"sw","t":"Expo and React Native essentials: Expo Router, components, styling, dev builds","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":820},{"id":"FSE.C07.M02","tr":"sw","t":"Data fetching, forms and local persistence (expo-sqlite)","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":830},{"id":"FSE.C07.M03","tr":"sw","t":"Builds and distribution: EAS, Play Console tracks, OTA updates, developer verification","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":840},{"id":"FSE.C07.M04","tr":"sw","t":"Offline sync patterns and background tasks","h":5.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":850},{"id":"FSE.C07.M05","tr":"sw","t":"Notifications: push, SMS fallback, deep links","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":860},{"id":"FSE.C07.M06","tr":"sw","t":"Device APIs: camera, location, files, signatures","h":4.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":870},{"id":"FSE.C07.M07","tr":"sw","t":"Android realities: low-end devices, data costs, performance profiling","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":880},{"id":"FSE.C07.M09","tr":"sw","t":"Mobile testing (React Native Testing Library; E2E options)","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":890},{"id":"FSE.C09.M05","tr":"sw","t":"Uptime, incident response and runbooks","h":3.5,"g":"Stage 3 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":900},{"id":"FSE.C09.M06","tr":"sw","t":"Hosting in practice and cost control (FinOps)","h":4.5,"g":"Stage 3 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":910},{"id":"FSE.C09.M07","tr":"sw","t":"Server hardening and an introduction to infrastructure as code","h":4.5,"g":"Stage 3 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":920},{"id":"FSE.C10.M06","tr":"sw","t":"Payment-flow security and fraud patterns","h":3.5,"g":"Stage 3 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":930},{"id":"FSE.C10.M07","tr":"sw","t":"Mobile security and Google Play policy compliance","h":3.5,"g":"Stage 3 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":940},{"id":"FSE.C10.M09","tr":"sw","t":"Hands-on web security labs (PortSwigger Web Security Academy)","h":5.5,"g":"Stage 3 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":950},{"id":"FSE.C11.M07","tr":"sw","t":"How computers work: memory, processes, concurrency","h":7.0,"g":"Stage 4 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":960},{"id":"FSE.C04.M08","tr":"sw","t":"Web performance and accessibility testing","h":3.5,"g":"Stage 4 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":970},{"id":"FSE.C04.M09","tr":"sw","t":"CSS and UI depth for commerce sites (layout systems, SEO-friendly markup)","h":4.5,"g":"Stage 4 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":980},{"id":"FSE.C05.M11","tr":"sw","t":"Django in depth: request lifecycle, middleware, signals, templates (HTMX awareness)","h":5.5,"g":"Stage 4 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":990},{"id":"FSE.C12.M08","tr":"sw","t":"System design practice: estimates, failure modes, capacity","h":4.5,"g":"Stage 4 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":1000},{"id":"FSE.C06.M09","tr":"sw","t":"Commerce frontends: SEO, server rendering options, performance budgets","h":5.0,"g":"Stage 4 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":1010},{"id":"FSE.C11.M08","tr":"sw","t":"Networks for engineers: TCP/IP, DNS, TLS","h":6.0,"g":"Stage 5 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":1020},{"id":"FSE.C11.M09","tr":"sw","t":"Operating systems for engineers","h":7.0,"g":"Stage 5 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":1030},{"id":"FSE.C03.M09","tr":"sw","t":"Analytics and time-series basics (PMO dashboards, farm sensors)","h":3.5,"g":"Stage 5 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":1040},{"id":"FSE.C09.M08","tr":"sw","t":"Scaling basics: load balancing, connection pooling, CDN","h":3.5,"g":"Stage 5 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":1050},{"id":"FSE.C07.M08","tr":"sw","t":"Native modules with the Expo Modules API and Kotlin","h":5.5,"g":"Stage 6 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":1060},{"id":"FSE.C10.M08","tr":"sw","t":"Children's data, monitoring ethics and age-appropriate design","h":4.5,"g":"Stage 6 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":1070},{"id":"STR.EBK.01","tr":"str","t":"Email EBK: next Engineering Conversion Programme intake, and my eligibility as a BTech holder","h":1,"g":"Registration route","c":1,"src":"","n":"Replaces the plan's Graduate Engineer application. Ask for: next intake date, entry requirements, fees, and whether earlier supervised work can count.","st":"open","o":1080},{"id":"STR.EBK.02","tr":"str","t":"Decide on KETRB registration as a Candidate Engineering Technologist","h":1.5,"g":"Registration route","c":1,"src":"","n":"A registration you can hold now, separate from the EBK route. Check the current requirements on the KETRB site before applying.","st":"open","o":1090},{"id":"STR.SETUP","tr":"str","t":"Week 1 setup and orientation (toolkit, diagnostic, EBK admin)","h":10,"g":"Setup","c":1,"src":"STR-V00-Navigator.md","n":"","st":"open","o":1100},{"id":"STR.V01.M01","tr":"str","t":"Units, vectors, free-body diagrams","h":6,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1110},{"id":"STR.V01.M02","tr":"str","t":"Equilibrium, supports, determinacy","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1120},{"id":"STR.V01.M03","tr":"str","t":"Trusses and frames: method of joints and sections","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1130},{"id":"STR.V01.M04","tr":"str","t":"Distributed loads, centroids, section properties","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1140},{"id":"STR.V01.M05","tr":"str","t":"Axial, shear and moment diagrams","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1150},{"id":"STR.V01.M06","tr":"str","t":"Stress, strain and material behaviour","h":6,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1160},{"id":"STR.V01.M07","tr":"str","t":"Bending and shear stress, combined stress, Mohr’s circle","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1170},{"id":"STR.V01.M08","tr":"str","t":"Torsion; beam deflections (Macaulay, moment-area)","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1180},{"id":"STR.V01.M09","tr":"str","t":"Buckling: Euler, effective length, imperfections","h":5,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1190},{"id":"STR.V01.M10","tr":"str","t":"Maths toolkit: linear algebra, calculus, numerical methods","h":5,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1200},{"id":"STR.V02.M01","tr":"str","t":"Determinacy, stability, idealisation, load paths","h":6,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1210},{"id":"STR.V02.M02","tr":"str","t":"Virtual work and energy methods","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1220},{"id":"STR.V02.M03","tr":"str","t":"Influence lines and moving loads","h":6,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1230},{"id":"STR.V02.M04","tr":"str","t":"Force (flexibility) method","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1240},{"id":"STR.V02.M05","tr":"str","t":"Slope-deflection","h":8,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1250},{"id":"STR.V02.M06","tr":"str","t":"Moment distribution, including sway","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1260},{"id":"STR.V02.M07","tr":"str","t":"Approximate methods: portal, cantilever, sub-frames","h":6,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1270},{"id":"STR.V02.M08","tr":"str","t":"Direct stiffness: trusses","h":8,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1280},{"id":"STR.V02.M09","tr":"str","t":"Direct stiffness: beams and plane frames (Python solver)","h":12,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1290},{"id":"STR.V02.M10","tr":"str","t":"Intro to FE; first software model and verification","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1300},{"id":"STR.V02.M11","tr":"str","t":"Arches, cables, space frames, plastic analysis intro","h":4,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1310},{"id":"STR.V03.M01","tr":"str","t":"Design philosophies: permissible stress to limit states","h":6,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1320},{"id":"STR.V03.M02","tr":"str","t":"EN 1990 + Kenya NA, combinations; full BS 8110/5950 alternative","h":9,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1330},{"id":"STR.V03.M03","tr":"str","t":"Permanent and imposed actions: EN 1991-1-1 and BS 6399-1","h":5,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1340},{"id":"STR.V03.M04","tr":"str","t":"Wind I: EN 1991-1-4 + full BS 6399-2 alternative","h":10,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1350},{"id":"STR.V03.M05","tr":"str","t":"Wind II: canopies, monopitch roofs, free-standing panels","h":7,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1360},{"id":"STR.V03.M06","tr":"str","t":"Thermal, execution and accidental actions; robustness","h":5,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1370},{"id":"STR.V03.M07","tr":"str","t":"Load takedown of a building (Python + drawing)","h":7,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1380},{"id":"STR.V03.M08","tr":"str","t":"Phase 1 integration and G1 gate exam","h":5,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1390},{"id":"STR.V15a","tr":"str","t":"Practice primer (EBK, supervision, ethics, stamps)","h":8,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1400},{"id":"STR.V04","tr":"str","t":"RC Design I (incl. 12 h BS 8110 alternatives)","h":132,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1410},{"id":"STR.V05","tr":"str","t":"Steel Design I (incl. MP-P2-1 canopy, BS 5950 alternatives)","h":125,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1420},{"id":"STR.V06","tr":"str","t":"Timber and Masonry (incl. BS 5628/5268 alternatives)","h":55,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1430},{"id":"STR.V07","tr":"str","t":"Geotechnics and Foundations I (incl. MP-P2-2 PV footing)","h":79,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1440},{"id":"STR.CAP-P2-1","tr":"str","t":"Capstone: RC frame, 4–6 storeys, Nairobi","h":68,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1450},{"id":"STR.CAP-P2-2","tr":"str","t":"Capstone: steel portal-frame shed","h":40,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1460},{"id":"STR.G2","tr":"str","t":"Gate G2 and mock interview","h":5,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1470},{"id":"STR.V08","tr":"str","t":"Advanced Concrete","h":96,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1480},{"id":"STR.V09","tr":"str","t":"Tall Building Systems (incl. seismic)","h":112,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1490},{"id":"STR.V10","tr":"str","t":"Deep Foundations and Basements","h":63,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1500},{"id":"STR.CAP-P3-1","tr":"str","t":"Capstone: 15–25 storey scheme design","h":72,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1510},{"id":"STR.G3","tr":"str","t":"Gate G3","h":5,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1520},{"id":"STR.V11","tr":"str","t":"Energy Infrastructure Structures","h":120,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1530},{"id":"STR.CAP-P4-1","tr":"str","t":"Capstone: PV ground-mount system","h":35,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1540},{"id":"STR.CAP-P4-2","tr":"str","t":"Capstone: fuel/EV station canopy","h":38,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1550},{"id":"STR.G4","tr":"str","t":"Gate G4 and mock interview","h":5,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1560},{"id":"STR.V12","tr":"str","t":"FEA and Nonlinear Analysis","h":80,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1570},{"id":"STR.V13","tr":"str","t":"Connections, Fatigue and Dynamics","h":82,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1580},{"id":"STR.V14","tr":"str","t":"Geotechnics in Depth","h":60,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1590},{"id":"STR.G5","tr":"str","t":"Gate G5","h":5,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1600},{"id":"STR.V15b","tr":"str","t":"Professional Practice and EBK","h":32,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1610},{"id":"STR.V16","tr":"str","t":"Structural Software Engineering","h":70,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1620},{"id":"STR.V17","tr":"str","t":"Trends and Frontiers: full study","h":25,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1630},{"id":"STR.G6","tr":"str","t":"Gate G6: final review","h":10,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1640},{"id":"AI.F01","tr":"ai","t":"How language models work: tokens, context windows, training vs inference","h":8,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1650},{"id":"AI.F02","tr":"ai","t":"The AI landscape and the vocabulary practitioners use","h":4,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1660},{"id":"AI.P01","tr":"ai","t":"Prompting: system prompts, few-shot examples, structured output","h":10,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1670},{"id":"AI.P02","tr":"ai","t":"Managing context, judging outputs and spotting hallucinations","h":6,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1680},{"id":"FSE.C13.M07","tr":"ai","t":"LLM APIs: messages, structured output, tool use, cost and latency","h":4.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1690},{"id":"FSE.C13.M08","tr":"ai","t":"RAG and embeddings (pgvector, LanceDB)","h":5.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1700},{"id":"FSE.C13.M09","tr":"ai","t":"Local models with Ollama on constrained hardware","h":3.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1710},{"id":"FSE.C13.M10","tr":"ai","t":"Evals and safety for AI features (incl. child-safe AI)","h":4.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1720},{"id":"AI.A01","tr":"ai","t":"Agents: the agentic loop, tool use, memory and planning patterns","h":16,"g":"3 · Agents and systems","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1730},{"id":"FSE.C13.M05","tr":"ai","t":"MCP and tool ecosystems","h":3.0,"g":"3 · Agents and systems","c":0,"src":"","n":"","st":"open","o":1740},{"id":"AI.A02","tr":"ai","t":"Multi-agent patterns, observability and debugging","h":8,"g":"3 · Agents and systems","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1750},{"id":"AI.S01","tr":"ai","t":"AI systems engineering: evaluation design, tracing, prompt-injection defence, cost control","h":14,"g":"3 · Agents and systems","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1760},{"id":"AI.GATE","tr":"ai","t":"Gate: I have built and shipped at least two apps personally","h":0.5,"g":"4 · Directing agents to build","c":1,"src":"","n":"","st":"open","o":1770},{"id":"FSE.C13.M01","tr":"ai","t":"Spec-driven development and context files","h":2.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1780},{"id":"FSE.C13.M02","tr":"ai","t":"Coding agents in practice: setup, permissions, plan-implement-test-review","h":3.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1790},{"id":"FSE.C13.M06","tr":"ai","t":"Agent and supply-chain security essentials","h":2.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1800},{"id":"FSE.C13.M03","tr":"ai","t":"Spec-driven development at scale: task packets and acceptance criteria","h":3.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1810},{"id":"FSE.C13.M04","tr":"ai","t":"Verification discipline and honest productivity measurement","h":3.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1820},{"id":"FSE.C13.M11","tr":"ai","t":"AI features for Kenyan contexts (Swahili, low bandwidth, cost)","h":2.5,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1830},{"id":"ENT.01","tr":"ent","t":"Write the venture thesis: who pays, for what, and why you","h":2,"g":"1 · Find the customer","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1840},{"id":"FSE.C14.M06","tr":"ent","t":"Customer discovery and sales for technical founders","h":2.5,"g":"1 · Find the customer","c":0,"src":"","n":"","st":"open","o":1850},{"id":"ENT.02","tr":"ent","t":"Ten customer conversations, each written up the same day","h":10,"g":"1 · Find the customer","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1860},{"id":"FSE.C14.M05","tr":"ent","t":"Kenyan business and tax basics for software firms","h":3.5,"g":"2 · Set up the company","c":0,"src":"","n":"","st":"open","o":1870},{"id":"ENT.03","tr":"ent","t":"Choose the business structure and register it; tax PIN and bank account","h":6,"g":"2 · Set up the company","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1880},{"id":"ENT.04","tr":"ent","t":"Data protection: decide on ODPC registration and write the privacy basics","h":3,"g":"2 · Set up the company","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1890},{"id":"FSE.C14.M03","tr":"ent","t":"Pricing models, contracts and IP, open-source licensing","h":3.5,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1900},{"id":"FSE.C14.M02","tr":"ent","t":"Specs clients sign, estimation and change control","h":2.75,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1910},{"id":"FSE.C14.M01","tr":"ent","t":"Client onboarding, SLAs and support","h":2.75,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1920},{"id":"FSE.C14.M04","tr":"ent","t":"Running a consultancy; positioning and portfolio","h":3.5,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1930},{"id":"ENT.05","tr":"ent","t":"First paid engagement: signed scope, price and acceptance terms","h":6,"g":"3 · Sell and deliver","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1940},{"id":"ENT.06","tr":"ent","t":"Startup resume review: check the criteria on the Proof page and set the date","h":1,"g":"4 · Resume the startup","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1950},{"id":"BLD.P01.1","tr":"build","t":"Chama: second MVP increment (statement import and reconciliation)","h":0,"g":"P01 Chama app","c":1,"src":"CHAMA APP project","n":"","st":"open","o":1960},{"id":"BLD.P01.2","tr":"build","t":"Chama v1.0: release to the client (set the new date)","h":0,"g":"P01 Chama app","c":1,"src":"CHAMA APP project","n":"","st":"open","o":1970},{"id":"BLD.P01.3","tr":"build","t":"Chama v1.0.1: share-out recording","h":0,"g":"P01 Chama app","c":1,"src":"CHAMA APP project","n":"","st":"open","o":1980}],"proofs":[{"id":"PR.01","tr":"str","t":"EBK has answered in writing on the conversion programme and my eligibility","done":0,"ev":""},{"id":"PR.02","tr":"str","t":"Phase 1 gate passed: mechanics, analysis and a working stiffness solver","done":0,"ev":""},{"id":"PR.03","tr":"str","t":"Two self-set design projects documented from brief to drawings","done":0,"ev":""},{"id":"PR.04","tr":"str","t":"Attached to one live project under a registered engineer","done":0,"ev":""},{"id":"PR.05","tr":"sw","t":"Three apps built personally and deployed","done":0,"ev":""},{"id":"PR.06","tr":"sw","t":"A written architecture decision record for each app","done":0,"ev":""},{"id":"PR.07","tr":"sw","t":"Can explain every shipped component without notes","done":0,"ev":""},{"id":"PR.08","tr":"ai","t":"One AI feature shipped with an evaluation suite","done":0,"ev":""},{"id":"PR.09","tr":"ai","t":"One project built by directing agents from my own spec","done":0,"ev":""},{"id":"PR.10","tr":"ent","t":"Company registered","done":0,"ev":""},{"id":"PR.11","tr":"ent","t":"First paying customer","done":0,"ev":""}],"criteria":[{"id":"CR.01","t":"Software Stage 1 and Stage 2 queues finished","done":0},{"id":"CR.02","t":"Three apps built personally and deployed","done":0},{"id":"CR.03","t":"Chama v1.0 in the client's hands","done":0},{"id":"CR.04","t":"Company registered","done":0},{"id":"CR.05","t":"Ten customer conversations written up","done":0}]};
-const VERSION = "1.1";
+const VERSION = "1.6";
+// The Chama build is a product inside the Software track, not a track of its own.
+SEED.tracks = SEED.tracks.filter(t => t.id !== "build");
+SEED.items.forEach(i => { if (i.tr === "build") { i.tr = "sw"; i.g = "Products"; i.prod = 1; } });
+function migrate() {
+  for (const i of S.items) if (i.tr === "build" || i.id.startsWith("BLD.")) { i.tr = "sw"; i.g = "Products"; i.prod = 1; }
+  for (const x of S.sessions) if (x.tr === "build") x.tr = "sw";
+  if (S.timer && S.timer.tr === "build") S.timer.tr = "sw";
+  delete S.settings.targets.build; if (S.planTrack === "build") S.planTrack = "sw";
+}
 
 /* ---------- helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -361,7 +580,7 @@ const modeOpts = sel => `<option value="">Not recorded</option>` + MODES.map((m,
 function startTimer(tr, it, label, off) {
   if (S.timer) { toast("A session is already running. Stop it first."); return; }
   S.timer = { tr, it: it || null, label: label || "", off: !!off, start: Date.now() };
-  S.view = "today"; save(); render(); window.scrollTo(0, 0);
+  S.view = "today"; save(); render(); toTop();
 }
 function sessionLabel(s) { const i = s.it && item(s.it); return i ? i.t : (s.label || track(s.tr).name); }
 function closeSessionDlg() {
@@ -428,16 +647,41 @@ const ICON = {
   ideas: '<path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0012 3z"/>',
   proof: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 9.5"/>',
   more: '<path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  bell: '<path d="M6 9a6 6 0 1112 0c0 5 2 6 2 7H4c0-1 2-2 2-7zM10 20a2 2 0 004 0"/>',
+  close: '<path d="M6 6l12 12M18 6L6 18"/>',
+  review: '<path d="M4 12a8 8 0 0113.7-5.7L20 8M20 4v4h-4M20 12a8 8 0 01-13.7 5.7L4 16M4 20v-4h4"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>',
+  pulse: '<path d="M3 12h4l2.5-6 4 12 2.5-6H21"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   theme: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none"/>'
 };
 const ico = (k, n = 20) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k] || ""}</svg>`;
+const eb = (k, text) => `<span class="eyebrow">${ico(k, 15)}${text}</span>`;
+const SK = {
+  cal: '<path d="M10.5 14h45v10.5h-45z" fill="#e2574c" stroke="none" opacity=".9"/><rect x="8" y="12" width="48" height="44" rx="7"/><path d="M8 25h48M21 7v10M43 7v10"/>',
+  bulb: '<circle cx="35" cy="26" r="13" fill="#f2c94c" stroke="none" opacity=".6"/><path d="M24 47h16M27 53h10M32 11c-9 0-16 7-16 15 0 5 3 9 6 12 2 2 3 4 3 7h14c0-3 1-5 3-7 3-3 6-7 6-12 0-8-7-15-16-15z"/><path d="M27 30l5 5 5-5M32 35v9M32 2v4M11 9l3 3M53 9l-3 3M4 26h4M56 26h4"/>',
+  proof: '<circle cx="33" cy="27" r="13" fill="#f2c94c" stroke="none" opacity=".6"/><circle cx="32" cy="26" r="15"/><path d="M23 39l-5 18 14-7 14 7-5-18"/><path d="M25 26l5 5 9-10" stroke="#22a06b" stroke-width="2.8"/>',
+  plan: '<circle cx="47" cy="21" r="5.5" fill="#e2574c" stroke="none"/><path d="M8 17l16-6 16 6 16-6v37l-16 6-16-6-16 6z"/><path d="M24 11v37M40 17v37"/><path d="M14 41c5-8 9 1 15-6s8-3 13-9" stroke-dasharray="3 4.5"/>',
+  week: '<path d="M10.5 14h45v10.5h-45z" fill="#6f9be8" stroke="none" opacity=".75"/><rect x="8" y="12" width="48" height="44" rx="7"/><path d="M8 25h48M21 7v10M43 7v10M17 35h6M29 35h6M41 35h6M17 45h6M29 45h6"/><path d="M40 45l3 3 6-7" stroke="#22a06b" stroke-width="2.6"/>'
+};
+function sketch(k, d) {
+  return `<div class="sk" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#rough)">${SK[k]}</svg>${k === "cal" ? `<span class="sk-m">${d.toLocaleDateString("en-GB", { month: "short" })}</span><span class="sk-d num">${d.getDate()}</span>` : ""}</div>`;
+}
+const viewWk = () => addDays(monday(todayIso()), -7 * (UI.wkOff || 0));
 function applyTheme() { const t = S.settings.theme, r = document.documentElement; if (t === "light" || t === "dark") r.dataset.theme = t; else delete r.dataset.theme; }
+function toTop() { window.scrollTo(0, 0); const i = $("#inner"); if (i) i.scrollTop = 0; }
+function renderAttn() {
+  const p = $("#attn"); p.hidden = !UI.attn; if (!UI.attn) { p.innerHTML = ""; return; }
+  const at = attention(), ng = nudges();
+  p.innerHTML = `<div class="card-h" style="align-items:center"><h3>Needs attention</h3><button class="ibtn" data-act="attn" aria-label="Close">${ico("close")}</button></div>` + (at.length || ng.length ?
+    at.map(a => `<div class="arow"><span>${esc(a.t)}</span><button class="btn sm" data-act="attn-go" ${a.tr ? `data-tr="${a.tr}"` : `data-v="${a.v}"`}>${a.b}</button></div>`).join("") + ng.map(n => `<div class="arow"><span>${n}</span><span></span></div>`).join("") :
+    `<div class="empty">Nothing needs you right now.</div>`);
+}
 function renderNav() {
   const parked = S.ideas.filter(i => i.st === "parked").length, cur = ' aria-current="page"';
   const wk = monday(todayIso()), st = weekStatus(wk);
   const goal = st.plan.goal, pct = goal ? Math.min(100, st.mins / (goal * 60) * 100) : 0;
-  $("#rail").innerHTML = `<button class="ritem" data-act="view" data-v="home" aria-label="Home"${S.view === "home" ? cur : ""}><span class="rico">${ico("home")}</span><span class="rlbl">Home</span></button><div class="rsep"></div>` +
+  $("#rail").innerHTML = `<button class="rbrand" data-act="view" data-v="home" aria-label="HAMWE home"><i></i><b>HAMWE</b></button>` +
     SEED.tracks.filter(t => !t.recurring).map(t => {
       const r = st.rows.find(x => x.tr.id === t.id);
       return `<button class="ritem" data-act="track" data-tr="${t.id}" style="--tc:var(--c-${t.id})" aria-label="${esc(t.name)}"${S.view === "track" && S.planTrack === t.id ? cur : ""}><span class="rico tc">${ico(t.id)}</span><span class="rlbl">${esc(t.name)}<small class="num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h this week</small></span></button>`;
@@ -447,6 +691,7 @@ function renderNav() {
     .map(([id, n]) => `<button data-act="view" data-v="${id}"${S.view === id ? cur : ""}>${ico(id, 17)}${n}${id === "ideas" ? badge : ""}</button>`).join("");
   $("#topmeta").innerHTML = (S.timer ? `<button class="pill" data-act="view" data-v="today" aria-label="Session running, open Today"><i class="live"></i><span id="clock2">00:00</span></button>` : "") +
     `<span class="wkmeta num">${hrs(st.mins)}${goal ? " / " + hnum(goal) : ""} h this week${goal ? `<span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span>` : ""}</span>
+    ${(n => `<button class="ibtn" data-act="attn" aria-label="Needs attention${n ? ": " + n : ""}" title="Needs attention"${UI.attn ? cur : ""}>${ico("bell")}${n ? `<span class="badge">${n}</span>` : ""}</button>`)(attention().length + nudges().length)}
     <button class="ibtn" data-act="quick-idea" aria-label="Park an idea" title="Park an idea">${ico("plus")}</button>
     <button class="ibtn" data-act="theme" aria-label="Switch theme" title="Theme: ${esc(S.settings.theme || "auto")}">${ico("theme")}</button>
     <button class="ibtn" data-act="view" data-v="more" aria-label="Settings and backup" title="Settings and backup"${S.view === "more" ? cur : ""}>${ico("more")}</button>`;
@@ -477,96 +722,93 @@ function nudges() {
 }
 
 function viewToday() {
-  const t = todayIso(), wk = monday(t), st = weekStatus(wk), L = logged(), h = [];
-  const p = pauseOn(t), last = lastSession();
-  h.push(`<div><h2>${fmtDate(t, { weekday: "long", day: "numeric", month: "long" })}</h2>
-    <p class="lede">${st.plan.mode === "pause" ? `Engagement week. Minimum ${hnum(st.plan.goal)} h.` :
-      st.plan.mode === "warmup" ? `Warm-up days. Targets begin ${fmtDate(S.settings.start)}; anything you log now counts.` :
-      st.plan.mode === "ramp" ? `Ramp week. Target ${hnum(st.plan.goal)} h, building to ${hnum(st.plan.total)}.` : `Target ${hnum(st.plan.goal)} h this week.`}</p></div>`);
-  if (p) h.push(`<div class="banner"><div><b>Paused for: ${esc(p.reason || "an engagement")}</b>, until ${fmtDate(p.until)}.</div>
-    <div class="lede">Your queues are frozen where you left them. One short session a day keeps the thread.</div>
-    <div class="row"><button class="btn sm" data-act="end-pause">End the pause now</button></div></div>`);
-  else if (S.pause && S.pause.until < t) h.push(`<div class="banner good"><div><b>Your engagement ended ${fmtDate(S.pause.until)}.</b> Nothing was lost; each queue resumes at the same item.</div>
-    <div class="row"><button class="btn sm pri" data-act="end-pause">Resume the full plan</button></div></div>`);
-  if (!S.timer) {
-    if (!last) h.push(`<div class="banner"><div><b>Start with one session.</b> Pick the suggested card, press Start, and stop when you have had enough. Nothing is behind.</div></div>`);
-    else { const gap = daysBetween(last.d, t); if (gap >= 3) h.push(`<div class="banner good"><div><b>Welcome back.</b> Your last session was ${fmtDate(last.d)}: ${esc(sessionLabel(last))}.</div><div class="lede">The queues did not move while you were away. Start with the suggested card.</div></div>`); }
-  }
-  if (S.timer) {
-    const tm = S.timer, it = tm.it && item(tm.it);
+  const t = todayIso(), wk = monday(t), st = weekStatus(wk), L = logged(), d = parse(t), tm = S.timer;
+  const p = pauseOn(t), last = lastSession(), goal = st.plan.goal;
+  const lede = st.plan.mode === "pause" ? `Engagement week. Minimum ${hnum(goal)} h.` :
+    st.plan.mode === "warmup" ? `Warm-up days. Targets begin ${fmtDate(S.settings.start)}; anything you log now counts.` :
+    st.plan.mode === "ramp" ? `Ramp week. Target ${hnum(goal)} h, building to ${hnum(st.plan.total)}.` : `Target ${hnum(goal)} h this week.`;
+  let hint = "";
+  if (p) hint = `<div class="banner"><div><b>Paused for: ${esc(p.reason || "an engagement")}</b>, until ${fmtDate(p.until)}. Your queues are frozen where you left them.</div><div class="row"><button class="btn sm" data-act="end-pause">End the pause now</button></div></div>`;
+  else if (S.pause && S.pause.until < t) hint = `<div class="banner good"><div><b>Your engagement ended ${fmtDate(S.pause.until)}.</b> Each queue resumes at the same item.</div><div class="row"><button class="btn sm pri" data-act="end-pause">Resume the full plan</button></div></div>`;
+  else if (!tm && !last) hint = `<div class="hint"><b>Start with one session.</b> Pick the suggested card, press Start, and stop when you have had enough. Nothing is behind.</div>`;
+  else if (!tm && daysBetween(last.d, t) >= 3) hint = `<div class="hint"><b>Welcome back.</b> Your last session was ${fmtDate(last.d)}: ${esc(sessionLabel(last))}. The queues did not move while you were away.</div>`;
+  const h = [`<div class="today-head">${sketch("cal", d)}
+    <div class="th-text"><h2>${fmtDate(t, { weekday: "long", day: "numeric", month: "long" })}</h2><p class="lede">${lede}</p>${hint}</div></div>`];
+  if (tm) {
+    const it = tm.it && item(tm.it);
     h.push(`<article class="card trk running" style="--tc:var(--c-${tm.tr})">
       <div class="card-h"><span class="chip">${esc(track(tm.tr).name)} · in session</span>${tm.off ? `<span class="tag warn">Off the plan</span>` : ""}</div>
-      <h3>${esc(it ? it.t : tm.label || track(tm.tr).label || "")}</h3>
-      <div class="clock" id="clock">00:00</div>
-      <div class="steps">Recall the last session (5 min) · Learn · Do · Test yourself · Log</div>
-      ${it && it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : ""}
+      <h3>${esc(it ? it.t : tm.label || track(tm.tr).label || "")}</h3><div class="clock" id="clock">00:00</div>
+      <div class="steps">Recall the last session (5 min) · Learn · Do · Test yourself · Log</div>${it && it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : ""}
       <div class="row"><button class="btn pri" data-act="stop">Stop and log</button></div></article>`);
   }
-  const ns = nudges();
-  for (const n of ns) h.push(`<div class="banner warn"><div>${n}</div></div>`);
-
-  const rows = st.rows.slice().sort((a, b) => {
-    const ra = a.base > 0 ? a.mins / ((a.target || a.base) * 60) : 9, rb = b.base > 0 ? b.mins / ((b.target || b.base) * 60) : 9;
-    return ra - rb || a.i - b.i;
-  });
-  h.push(`<div class="sect"><h2>Next up</h2></div><div class="cols">`);
-  let first = true;
-  for (const r of rows) {
-    const tr = r.tr, it = tr.recurring ? null : nextItem(tr.id);
-    if (!tr.recurring && !it) continue;
-    const sug = first && !S.timer && r.base > 0 && (r.target === 0 || r.mins < r.target * 60); first = false;
+  const sg = tm ? null : suggestions()[0], sugId = sg && (sg.r.target === 0 || sg.r.mins < sg.r.target * 60) ? sg.r.tr.id : null;
+  const cards = st.rows.filter(r => !r.tr.recurring).map(r => {
+    const tr = r.tr, it = nextItem(tr.id), sug = sugId === tr.id;
     const wkTxt = r.target > 0 ? `${hrs(r.mins)} / ${hnum(r.target)} h` : (r.mins ? `${hrs(r.mins)} h` : "");
-    if (tr.recurring) {
-      h.push(`<article class="card trk" style="--tc:var(--c-${tr.id})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="row">${sug ? `<span class="tag sug">Suggested now</span>` : ""}<span class="meta num">${wkTxt}</span></span></div>
-        <h3>${esc(tr.label)}</h3><div class="row"><button class="btn${sug ? " pri" : ""}" data-act="start" data-tr="${tr.id}">Start</button></div></article>`);
-      continue;
-    }
-    const lm = L[it.id] || 0, pct = it.h > 0 ? Math.min(100, lm / (it.h * 60) * 100) : 0;
-    h.push(`<article class="card trk" style="--tc:var(--c-${tr.id})">
-      <div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="row">${sug ? `<span class="tag sug">Suggested now</span>` : ""}<span class="meta num">${wkTxt}</span></span></div>
-      <h3>${esc(it.t)}</h3>
-      <div class="meta"><code>${esc(it.id)}</code>${it.h > 0 ? `<span class="num">${hrs(lm)} of ${hnum(it.h)} h</span>` : (lm ? `<span class="num">${hrs(lm)} h so far</span>` : "")}${lessonTag(it)}</div>
-      ${it.h > 0 ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
-      ${it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : (it.n ? `<div class="note">${esc(it.n)}</div>` : "")}
+    if (!it) return `<article class="card tk" style="--tc:var(--c-${tr.id})"><div class="card-h"><span class="chip">${ico(tr.id, 15)}${esc(tr.name)}</span><span class="meta num">${wkTxt}</span></div><h3>Queue finished</h3></article>`;
+    const lm = L[it.id] || 0;
+    return `<article class="card tk" style="--tc:var(--c-${tr.id})">
+      <div class="card-h"><span class="chip">${ico(tr.id, 15)}${esc(tr.name)}</span><span class="row">${sug ? `<span class="tag sug">Suggested now</span>` : ""}<span class="meta num">${wkTxt}</span></span></div>
+      <h3 class="clamp">${esc(it.t)}</h3>
+      <div class="meta"><code>${esc(it.id)}</code>${it.h > 0 ? `<span class="num">${hrs(lm)} of ${hnum(it.h)} h</span>` : (lm ? `<span class="num">${hrs(lm)} h so far</span>` : "")}</div>
+      ${it.h > 0 ? `<div class="bar"><i style="width:${Math.min(100, lm / (it.h * 60) * 100)}%"></i></div>` : ""}
+      ${it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : (!it.c ? `<div class="meta">${lessonTag(it)}</div>` : "")}
       <div class="row"><button class="btn${sug ? " pri" : ""}" data-act="start" data-tr="${tr.id}" data-it="${esc(it.id)}">Start</button>
         <button class="btn" data-act="item-done" data-it="${esc(it.id)}">Mark done</button>
-        <button class="btn quiet" data-act="open-plan" data-tr="${tr.id}">See queue</button></div></article>`);
-  }
-  h.push(`</div><div class="sect"><h2>Caught an idea?</h2></div>
-    <form class="inline" data-form="capture"><input type="text" name="text" id="cap-today" placeholder="Park it here in one line, then get back to the session" required maxlength="300" aria-label="Park an idea"><button class="btn" type="submit">Park</button></form>
-    <div class="row"><button class="btn quiet" data-act="off-plan">Work on something not on the plan</button><button class="btn quiet" data-act="past">Log a past session</button></div>`);
+        <button class="btn quiet" data-act="open-plan" data-tr="${tr.id}">Queue</button></div></article>`;
+  }).join("");
+  const rv = st.rows.find(r => r.tr.recurring), closed = S.reviews[wk], rsug = rv && sugId === rv.tr.id;
+  const due = S.items.filter(i => i.st === "done" && i.doneAt).sort((a, b) => a.doneAt < b.doneAt ? 1 : -1).slice(0, 4);
+  const review = rv ? `<article class="card tk" style="--tc:var(--c-rev)">
+    <div class="card-h"><span class="chip">${ico("review", 15)}Review</span>${rsug ? `<span class="tag sug">Suggested now</span>` : ""}</div>
+    <div class="big num">${hrs(rv.mins)}<small>${rv.target > 0 ? `of ${hnum(rv.target)} h` : "h this week"}</small></div>
+    <p class="lede">Flashcards, a re-quiz of what you finished, and the weekly close.</p>
+    ${due.length ? due.map(i => `<div class="rq"><span class="clamp1">${esc(i.t)}</span><span class="meta num">${daysBetween(i.doneAt, t)} d</span></div>`).join("") : `<div class="meta">Finished items appear here for a re-quiz.</div>`}
+    <div><span class="tag${closed ? " good" : ""}">${closed ? "Week closed" : "Week open"}</span></div>
+    <div class="row"><button class="btn${rsug ? " pri" : ""}" data-act="start" data-tr="${rv.tr.id}">Start</button>${closed ? "" : `<button class="btn quiet" data-act="view" data-v="week">Close week</button>`}</div></article>` : "";
+  const parked = S.ideas.filter(i => i.st === "parked").sort((a, b) => b.ts - a.ts);
+  h.push(`<div class="today-grid"><section class="panel"><div class="card-h">${eb("today", "Next up")}<span class="meta num">${hrs(st.mins)}${goal ? " / " + hnum(goal) : ""} h this week</span></div>
+      <div class="nu-grid"><div class="cols tgroup">${cards}</div>${review}</div></section>
+    <section class="panel ideas-p"><div class="row" style="gap:14px;flex-wrap:nowrap">${sketch("bulb")}<div><h3>Caught an idea?</h3><p class="lede">Park it in one line, then get back to the session.</p></div></div>
+      <form class="inline" data-form="capture"><input type="text" name="text" id="cap-today" placeholder="The idea, in one line" required maxlength="300" aria-label="Park an idea"><button class="btn" type="submit">Park</button></form>
+      <div>${parked.length ? `<div class="card-h" style="margin-bottom:4px">${eb("ideas", `Parked (${parked.length})`)}<button class="btn sm quiet" data-act="view" data-v="ideas">Decide</button></div>` + parked.slice(0, 5).map(i => `<div class="irow clamp">${esc(i.text)}</div>`).join("") : `<div class="empty">Nothing parked. Ideas you catch mid-session wait here until you decide on them.</div>`}</div>
+      <div class="tail"><button class="btn quiet" data-act="off-plan">Work on something not on the plan</button><button class="btn quiet" data-act="past">Log a past session</button></div></section></div>`);
   return h.join("");
 }
 
 function viewWeek() {
-  const t = todayIso(), wk = monday(t), st = weekStatus(wk), ws = weekSessions(wk), h = [];
-  h.push(`<div><h2>Week of ${fmtDate(wk, { day: "numeric", month: "long" })}</h2><p class="lede num">${hrs(st.mins)} h logged${st.plan.goal ? ` of ${hnum(st.plan.goal)} h` : ""}${st.plan.mode === "pause" ? " (engagement minimum)" : st.plan.mode === "ramp" ? " (ramp week)" : st.plan.mode === "warmup" ? ". Warm-up, no target yet" : ""}</p></div>`);
-  h.push(`<div class="card">` + st.rows.filter(r => r.base > 0 || r.mins > 0).map(r => {
-    const pct = Math.min(100, r.mins / ((r.target || r.base || 1) * 60) * 100);
-    return `<div class="wkrow" style="--tc:var(--c-${r.tr.id})"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${pct}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`;
-  }).join("") + `</div>`);
-  const dm = []; let mx = 60;
-  for (let i = 0; i < 7; i++) { const d = addDays(wk, i); const m = ws.filter(s => s.d === d).reduce((a, s) => a + s.m, 0); dm.push([d, m]); mx = Math.max(mx, m); }
-  h.push(`<div class="card"><div class="days">` + dm.map(([d, m]) => `<div class="day${d === t ? " today" : ""}"><span class="num">${m ? hrs(m) : ""}</span><i style="height:${Math.round(m / mx * 60)}px"></i><b>${fmtDate(d, { weekday: "short" })}</b></div>`).join("") + `</div></div>`);
-
-  const rv = S.reviews[wk];
-  h.push(`<div class="sect"><h2>Close the week</h2></div><div class="card">` + (rv ?
-    `<div><span class="tag good">Closed ${fmtDate(iso(new Date(rv.ts)))}</span></div>${rv.note ? `<div class="note">${esc(rv.note)}</div>` : ""}<div class="row"><button class="btn sm" data-act="reopen-week">Edit</button></div>` :
-    `<p class="lede">Ten minutes, once a week: decide every parked idea, then write one line on what to change.</p>
-     <form data-form="close-week" style="display:flex;flex-direction:column;gap:10px"><label>What worked, and one thing to change next week<textarea name="note" id="wk-note"></textarea></label>
-     <div class="row"><button class="btn pri" type="submit">Close this week</button>${S.ideas.some(i => i.st === "parked") ? `<button class="btn" type="button" data-act="view" data-v="ideas">Decide parked ideas first</button>` : ""}</div></form>`) + `</div>`);
-
-  h.push(`<div class="sect"><h2>Sessions this week</h2><button class="btn sm" data-act="past">Log a past session</button></div><div class="card">` +
-    (ws.length ? ws.slice().sort((a, b) => b.ts - a.ts).map(s => `<div class="srow"><div><span class="chip" style="--tc:var(--c-${s.tr})">${esc(track(s.tr).short)}</span> ${esc(sessionLabel(s))}${s.off ? ` <span class="tag warn">off plan</span>` : ""}
-      <div class="meta">${fmtDate(s.d)}${s.mode !== null && s.mode !== undefined ? ` · AI mode ${s.mode}` : ""}${s.note ? ` · ${esc(s.note)}` : ""}</div></div>
-      <div class="row"><span class="num">${hrs(s.m)} h</span><button class="btn sm quiet danger" data-act="del-session" data-id="${s.id}">${UI.armed === s.id ? "Confirm" : "Delete"}</button></div></div>`).join("") : `<div class="empty">No sessions yet this week.</div>`) + `</div>`);
-
-  const hist = [];
-  for (let i = 1; i <= 8; i++) { const w = addDays(wk, -7 * i); if (w < monday(iso(new Date(S.created)))) break; const s2 = weekStatus(w); hist.push([w, s2.mins, s2.plan.goal, s2.plan.mode]); }
-  if (hist.length) h.push(`<div class="sect"><h2>Earlier weeks</h2></div><div class="card">` + hist.map(([w, m, g, mode]) => `<div class="wkrow"><span>${fmtDate(w, { day: "numeric", month: "short" })}</span><div class="bar"><i style="width:${g ? Math.min(100, m / (g * 60) * 100) : (m ? 100 : 0)}%"></i></div><span class="r num">${hrs(m)}${g ? " / " + hnum(g) : ""} h${mode === "pause" ? " ·P" : ""}</span></div>`).join("") + `</div>`);
-  return h.join("");
+  const t = todayIso(), wk = viewWk(), off = UI.wkOff || 0, st = weekStatus(wk), ws = weekSessions(wk), goal = st.plan.goal, mode = st.plan.mode, h = [];
+  const modeTxt = mode === "pause" ? "engagement minimum" : mode === "ramp" ? "ramp week" : mode === "warmup" ? "warm-up, no target yet" : "full week";
+  const head = `<div class="today-head">${sketch("week")}<div class="th-text"><h2>Week of ${fmtDate(wk, { day: "numeric", month: "long" })}</h2><p class="lede num">${hrs(st.mins)} h logged${goal ? ` of ${hnum(goal)} h` : ""} · ${modeTxt}${off ? "" : " · this week"}</p></div>
+    <div class="row" style="margin-left:auto"><button class="btn sm" data-act="wk-nav" data-dir="1">‹ Earlier</button>${off ? `<button class="btn sm" data-act="wk-nav" data-dir="-1">Later ›</button><button class="btn sm pri" data-act="wk-nav" data-dir="0">This week</button>` : ""}</div></div>`;
+  const rows = st.rows.filter(r => r.base > 0 || r.mins > 0);
+  h.push(`<article class="card wk-a"><div class="card-h">${eb("layers", "By track")}<span class="meta">${goal ? `${Math.round(Math.min(100, st.mins / (goal * 60) * 100))}% of target` : ""}</span></div>
+    <div class="big num">${hrs(st.mins)}<small>${goal ? `of ${hnum(goal)} h` : "h logged"}</small></div>` +
+    rows.map(r => `<div class="wkrow" style="--tc:var(--c-${r.tr.id})"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${Math.min(100, r.mins / ((r.target || r.base || 1) * 60) * 100)}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`).join("") + `</article>`);
+  const days = []; let mx = 120;
+  for (let i = 0; i < 7; i++) { const d = addDays(wk, i), by = {}; let m = 0; for (const x of ws) if (x.d === d) { by[x.tr] = (by[x.tr] || 0) + x.m; m += x.m; } days.push({ d, m, by }); mx = Math.max(mx, m); }
+  const active = days.filter(x => x.m > 0).length;
+  h.push(`<article class="card wk-b"><div class="card-h">${eb("pulse", "By day")}<span class="meta num">${active} of 7 days</span></div><div class="dstack">` +
+    days.map(x => `<div class="dcol${x.d === t ? " now" : ""}"><span class="num">${x.m ? hrs(x.m) : ""}</span><div class="dwrap"><div class="dbar" style="height:${x.m / mx * 100}%">${SEED.tracks.filter(tr => x.by[tr.id]).map(tr => `<i style="--tc:var(--c-${tr.id});--m:${x.by[tr.id]}" title="${esc(tr.name)}: ${hrs(x.by[tr.id])} h"></i>`).join("")}</div></div><b>${fmtDate(x.d, { weekday: "short" })} ${parse(x.d).getDate()}</b></div>`).join("") +
+    `</div><div class="legend">${rows.map(r => `<span style="--tc:var(--c-${r.tr.id})"><i></i>${esc(r.tr.name)}</span>`).join("")}</div></article>`);
+  const rv = S.reviews[wk], parked = S.ideas.filter(i => i.st === "parked").length;
+  h.push(`<article class="card wk-c"><div class="card-h">${eb("review", "Close the week")}${rv ? `<span class="tag good">Closed ${fmtDate(iso(new Date(rv.ts)))}</span>` : `<span class="tag">Open</span>`}</div>` + (rv ?
+    `${rv.note ? `<div class="note">${esc(rv.note)}</div>` : `<p class="lede">Closed without a note.</p>`}<div class="row" style="margin-top:auto"><button class="btn sm" data-act="reopen-week">Edit</button></div>` :
+    `<p class="lede">Ten minutes: decide every parked idea, then write one line on what to change.</p>
+     <form data-form="close-week" style="display:flex;flex-direction:column;gap:10px;flex:1"><label style="flex:1">What worked, and one thing to change<textarea name="note" id="wk-note" style="flex:1"></textarea></label>
+     <div class="row"><button class="btn pri" type="submit">Close this week</button>${parked ? `<button class="btn" type="button" data-act="view" data-v="ideas">Decide ${parked} idea${parked > 1 ? "s" : ""}</button>` : ""}</div></form>`) + `</article>`);
+  h.push(`<article class="card wk-d"><div class="card-h" style="align-items:center">${eb("today", `Sessions (${ws.length})`)}<button class="btn sm" data-act="past">Log a past session</button></div><div class="scroll">` +
+    (ws.length ? ws.slice().sort((a, b) => b.ts - a.ts).map(x => `<div class="srow"><div><span class="chip" style="--tc:var(--c-${x.tr})">${esc(track(x.tr).short)}</span> ${esc(sessionLabel(x))}${x.off ? ` <span class="tag warn">off plan</span>` : ""}
+      <div class="meta">${fmtDate(x.d)}${x.mode !== null && x.mode !== undefined ? ` · AI mode ${x.mode}` : ""}${x.note ? ` · ${esc(x.note)}` : ""}</div></div>
+      <div class="row"><span class="num">${hrs(x.m)} h</span><button class="btn sm quiet danger" data-act="del-session" data-id="${x.id}">${UI.armed === x.id ? "Confirm" : "Delete"}</button></div></div>`).join("") : `<div class="empty">No sessions in this week.</div>`) + `</div></article>`);
+  const cur = monday(t), first = monday(iso(new Date(S.created))), hist = [];
+  for (let i = 0; i < 8; i++) { const w = addDays(cur, -7 * i); if (i > 0 && w < first) break; const s2 = weekStatus(w); hist.push({ w, i, m: s2.mins, g: s2.plan.goal, mode: s2.plan.mode }); }
+  h.push(`<article class="card wk-e"><div class="card-h">${eb("week", "Recent weeks")}<span class="meta">hours against target</span></div>` +
+    hist.map(x => `<div class="wkrow${x.i === off ? " cur" : ""}" style="grid-template-columns:96px 1fr 86px"><span>${fmtDate(x.w, { day: "numeric", month: "short" })}</span><div class="bar"><i style="width:${x.g ? Math.min(100, x.m / (x.g * 60) * 100) : (x.m ? 100 : 0)}%"></i></div><span class="r num">${hrs(x.m)}${x.g ? " / " + hnum(x.g) : ""} h</span></div>`).join("") +
+    (hist.length < 2 ? `<div class="meta" style="margin-top:auto">Earlier weeks appear here as you go.</div>` : "") + `</article>`);
+  return head + `<div class="dash wkpage">${h.join("")}</div>`;
 }
-
 function trackStats(trId) {
   const L = logged(), all = S.items.filter(i => i.tr === trId && i.st !== "removed").sort((a, b) => a.o - b.o);
   const done = all.filter(i => i.st === "done"), open = all.filter(i => i.st === "open");
@@ -600,40 +842,51 @@ function attention() {
   if ((parse(t).getDay() + 6) % 7 >= 5 && !S.reviews[monday(t)]) a.push({ t: "This week is not closed yet", v: "week", b: "Close it" });
   return a;
 }
+function suggestions() {
+  const st = weekStatus(monday(todayIso())), out = [];
+  const rows = st.rows.filter(r => r.base > 0).sort((a, b) => a.mins / ((a.target || a.base) * 60) - b.mins / ((b.target || b.base) * 60) || a.i - b.i);
+  for (const r of rows) { const it = r.tr.recurring ? null : nextItem(r.tr.id); if (r.tr.recurring || it) out.push({ r, it }); }
+  return out;
+}
 function viewHome() {
-  const t = todayIso(), st = weekStatus(monday(t)), L = logged(), h = [], tm = S.timer, sg = suggestion();
+  const t = todayIso(), st = weekStatus(monday(t)), L = logged(), h = [], tm = S.timer, sgs = suggestions(), sg = sgs[0];
+  const after = list => list.length ? `<div class="after">${eb("today", "After this")}` + list.map(x => `<div class="nx" style="--tc:var(--c-${x.r.tr.id})"><i></i><span class="clamp1"><b>${esc(x.r.tr.name)}</b> · ${esc(x.it ? x.it.t : x.r.tr.label)}</span>${tm ? "" : `<button class="btn sm quiet" data-act="start" data-tr="${x.r.tr.id}"${x.it ? ` data-it="${esc(x.it.id)}"` : ""}>Start</button>`}</div>`).join("") + `</div>` : "";
   if (tm) {
     const it = tm.it && item(tm.it);
     h.push(`<article class="card hero" style="--tc:var(--c-${tm.tr})"><span class="eyebrow">In session · ${esc(track(tm.tr).name)}</span><h1>${esc(it ? it.t : tm.label || track(tm.tr).label || "")}</h1><div class="clock" id="clock">00:00</div>
-      <div class="steps">Recall the last session (5 min) · Learn · Do · Test yourself · Log</div><div class="row"><button class="btn pri lg" data-act="stop">Stop and log</button></div></article>`);
+      <div class="steps">Recall the last session (5 min) · Learn · Do · Test yourself · Log</div>${it && it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : ""}
+      <div class="row"><button class="btn pri lg" data-act="stop">Stop and log</button></div>${after(sgs.filter(x => x.r.tr.id !== tm.tr).slice(0, 2))}</article>`);
   } else if (sg) {
     const tr = sg.r.tr, it = sg.it, lm = it ? (L[it.id] || 0) : 0;
     h.push(`<article class="card hero" style="--tc:var(--c-${tr.id})"><span class="eyebrow">${fmtDate(t, { weekday: "long", day: "numeric", month: "long" })} · next up in ${esc(tr.name)}</span>
       <h1>${esc(it ? it.t : tr.label)}</h1>
-      ${it ? `<div class="meta"><code>${esc(it.id)}</code>${it.h > 0 ? `<span class="num">${hrs(lm)} of ${hnum(it.h)} h</span>` : ""}${lessonTag(it)}</div>${it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : ""}` : ""}
-      <div class="row"><button class="btn pri lg" data-act="start" data-tr="${tr.id}"${it ? ` data-it="${esc(it.id)}"` : ""}>Start session</button><button class="btn lg" data-act="view" data-v="today">All of today</button></div></article>`);
+      ${it ? `<div class="meta"><code>${esc(it.id)}</code>${it.h > 0 ? `<span class="num">${hrs(lm)} of ${hnum(it.h)} h</span>` : ""}${lessonTag(it)}</div>${it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : (it.n ? `<div class="note">${esc(it.n)}</div>` : "")}` : ""}
+      <div class="row"><button class="btn pri lg" data-act="start" data-tr="${tr.id}"${it ? ` data-it="${esc(it.id)}"` : ""}>Start session</button><button class="btn lg" data-act="view" data-v="today">All of today</button></div>${after(sgs.slice(1, 3))}</article>`);
   } else h.push(`<article class="card hero"><span class="eyebrow">${fmtDate(t)}</span><h1>Every queue is finished.</h1></article>`);
-  const goal = st.plan.goal, mode = st.plan.mode;
-  h.push(`<article class="card wk"><div class="card-h"><span class="eyebrow">This week</span><span class="meta">${mode === "pause" ? "Engagement minimum" : mode === "warmup" ? `Warm-up until ${fmtDate(S.settings.start)}` : mode === "ramp" ? "Ramp week" : "Full week"}</span></div>
-    <div class="big num">${hrs(st.mins)}<small>${goal ? `of ${hnum(goal)} h` : "h logged"}</small></div>` +
-    st.rows.filter(r => r.base > 0 || r.mins > 0).map(r => `<div class="wkrow" style="--tc:var(--c-${r.tr.id})"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${Math.min(100, r.mins / ((r.target || r.base || 1) * 60) * 100)}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`).join("") + `</article>`);
-  for (const tr of SEED.tracks.filter(x => !x.recurring && x.target > 0)) {
-    const s = trackStats(tr.id), nx = s.open[0];
-    h.push(`<button class="card trk tcard" data-act="track" data-tr="${tr.id}" style="--tc:var(--c-${tr.id})"><span class="tname">${ico(tr.id, 18)}${esc(tr.name)}</span>
-      <div class="big num">${Math.round(s.pct)}<small>% done</small></div><div class="bar"><i style="width:${s.pct}%"></i></div>
-      <div class="meta num">${s.done.length} of ${s.all.length} items · ${hnum(s.remain)} h left</div>
-      <div class="meta num">${s.weeks ? `Finish about ${s.finish} at ${hnum(s.wkT)} h a week` : (s.remain > 0 ? "No weekly hours set" : "Queue finished")}</div>
-      ${nx ? `<div class="note clamp">Next: ${esc(nx.t)}</div>` : ""}</button>`);
-  }
+
+  const ts = SEED.tracks.filter(x => !x.recurring && x.target > 0).map(tr => ({ tr, s: trackStats(tr.id) }));
+  h.push(`<article class="card tracks"><div class="card-h">${eb("layers", "Tracks")}<span class="meta num">${ts.reduce((a, x) => a + x.s.done.length, 0)} of ${ts.reduce((a, x) => a + x.s.all.length, 0)} items done</span></div><div class="tgrid">` +
+    ts.map(({ tr, s }) => `<button class="tmini" data-act="track" data-tr="${tr.id}" style="--tc:var(--c-${tr.id})"><span class="tname">${ico(tr.id, 18)}${esc(tr.name)}</span>
+      <span class="big num">${Math.round(s.pct)}<small>%</small></span><div class="bar"><i style="width:${s.pct}%"></i></div>
+      <span class="meta num">${s.done.length} of ${s.all.length} · ${hnum(s.remain)} h left</span><span class="meta num">${s.weeks ? `Finish about ${s.finish}` : (s.remain > 0 ? "No weekly hours set" : "Finished")}</span></button>`).join("") + `</div></article>`);
+
   const c = consistency(), totalM = live().reduce((a, x) => a + x.m, 0);
-  h.push(`<article class="card cons"><div class="card-h"><span class="eyebrow">Consistency</span><span class="meta num">${c.d28} of the last 28 days</span></div>
-    <div class="row" style="gap:28px;align-items:flex-end"><div><div class="big num">${c.run}<small>day${c.run === 1 ? "" : "s"} in a row</small></div><div class="meta num" style="margin-top:6px">${hrs(totalM)} h in ${live().length} session${live().length === 1 ? "" : "s"} so far</div></div>
-    <div class="heat" style="flex:1;min-width:220px" role="img" aria-label="Hours studied per day over the last twelve weeks">${c.cells.map(x => `<i class="l${x.lv}${x.fut ? " fut" : ""}${x.d === t ? " now" : ""}" title="${fmtDate(x.d)}: ${hrs(x.m)} h"></i>`).join("")}</div></div>
-    <div class="meta">One square per day, Monday at the top, this week on the right. Darker means more hours.</div></article>`);
-  const at = attention(), ng = nudges();
-  h.push(`<article class="card attn"><span class="eyebrow">Needs attention</span>` + (at.length || ng.length ?
-    at.map(a => `<div class="arow"><span>${esc(a.t)}</span><button class="btn sm" data-act="${a.tr ? "track" : "view"}" ${a.tr ? `data-tr="${a.tr}"` : `data-v="${a.v}"`}>${a.b}</button></div>`).join("") + ng.map(n => `<div class="arow"><span>${n}</span><span></span></div>`).join("") :
-    `<div class="empty">Nothing needs you right now.</div>`) + `</article>`);
+  h.push(`<article class="card cons"><div class="card-h">${eb("pulse", "Consistency")}<span class="meta num">${c.d28} of the last 28 days</span></div>
+    <div class="row" style="gap:22px;align-items:flex-end;flex-wrap:nowrap"><div style="flex:none"><div class="big num">${c.run}<small>day${c.run === 1 ? "" : "s"} in a row</small></div><div class="meta num" style="margin-top:6px">${hrs(totalM)} h · ${live().length} session${live().length === 1 ? "" : "s"}</div></div>
+    <div class="heat" style="flex:1;min-width:0" role="img" aria-label="Hours studied per day over the last twelve weeks">${c.cells.map(x => `<i class="l${x.lv}${x.fut ? " fut" : ""}${x.d === t ? " now" : ""}" title="${fmtDate(x.d)}: ${hrs(x.m)} h"></i>`).join("")}</div></div>
+    <div class="meta">Twelve weeks, Monday at the top. Darker means more hours.</div></article>`);
+
+  const goal = st.plan.goal, mode = st.plan.mode;
+  h.push(`<article class="card wk"><div class="card-h">${eb("week", "This week")}<span class="meta">${mode === "pause" ? "Engagement minimum" : mode === "warmup" ? `Warm-up until ${fmtDate(S.settings.start)}` : mode === "ramp" ? "Ramp week" : "Full week"}</span></div>
+    <div class="big num">${hrs(st.mins)}<small>${goal ? `of ${hnum(goal)} h` : "h logged"}</small></div>` +
+    st.rows.filter(r => !r.tr.recurring && (r.base > 0 || r.mins > 0)).map(r => `<div class="wkrow" style="--tc:var(--c-${r.tr.id});grid-template-columns:118px 1fr 78px"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${Math.min(100, r.mins / ((r.target || r.base || 1) * 60) * 100)}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`).join("") + `</article>`);
+
+  const rv = st.rows.find(r => r.tr.id === "rev"), closed = S.reviews[monday(t)];
+  const due = S.items.filter(i => i.st === "done" && i.doneAt).sort((a, b) => a.doneAt < b.doneAt ? 1 : -1).slice(0, 3);
+  h.push(`<article class="card rev" style="--tc:var(--c-rev)"><div class="card-h">${eb("review", "Review")}<span class="tag${closed ? " good" : ""}">${closed ? "Week closed" : "Week open"}</span></div>
+    <div class="big num">${hrs(rv ? rv.mins : 0)}<small>${rv && rv.target > 0 ? `of ${hnum(rv.target)} h` : "h this week"}</small></div>` +
+    (due.length ? `<div class="meta">Re-quiz what you finished last</div>` + due.map(i => `<div class="rq"><span class="clamp1">${esc(i.t)}</span><span class="meta num">${daysBetween(i.doneAt, t)} d ago</span></div>`).join("") : `<p class="lede">Items you finish appear here for a re-quiz.</p>`) +
+    `<div class="row">${tm ? "" : `<button class="btn" data-act="start" data-tr="rev">Start review</button>`}${closed ? "" : `<button class="btn quiet" data-act="view" data-v="week">Close the week</button>`}</div></article>`);
   return `<div class="dash">${h.join("")}</div>`;
 }
 function queueHtml(trId, L) {
@@ -670,19 +923,87 @@ function viewTrack() {
   if (ps.length) h.push(`<div class="sect"><h2>Proof for this track</h2><button class="btn sm" data-act="view" data-v="proof">Open Proof</button></div><div class="card">` + ps.map(p => `<div class="arow"><span class="${p.done ? "done-t" : ""}">${esc(p.t)}</span><span class="tag${p.done ? " good" : ""}">${p.done ? "Done" : "Open"}</span></div>`).join("") + `</div>`);
   return h.join("");
 }
+function stageOf(i) {
+  const g = i.g || "Other", k = g.indexOf(" · ");
+  if (i.tr === "str" && /^STR\.(SETUP|V0[123])/.test(i.id)) return ["Phase 1 · Foundations rebuild", g];
+  if (k > 0 && i.tr !== "str" && !/^\d+$/.test(g.slice(0, k))) return [g.slice(0, k), g.slice(k + 3)];
+  return [g, ""];
+}
+function planData(trId, L) {
+  const all = S.items.filter(i => i.tr === trId && i.st !== "removed").sort((a, b) => a.o - b.o), open = all.filter(i => i.st === "open");
+  const stages = [], si = {};
+  for (const i of all) {
+    const [pn, sub] = stageOf(i);
+    if (!(pn in si)) { si[pn] = stages.length; stages.push({ name: pn, subs: [], gi: {}, count: 0, done: 0, hours: 0, remain: 0 }); }
+    const sg = stages[si[pn]];
+    if (!(i.g in sg.gi)) { sg.gi[i.g] = sg.subs.length; sg.subs.push({ g: i.g, label: sub, items: [] }); }
+    sg.subs[sg.gi[i.g]].items.push(i); sg.count++; sg.hours += i.h;
+    if (i.st === "done") sg.done++; else if (i.st === "open") sg.remain += Math.max(0, i.h - (L[i.id] || 0) / 60);
+  }
+  const nx = open[0], wkT = S.settings.targets[trId] || 0; let cum = 0;
+  for (const sg of stages) {
+    sg.pct = sg.hours > 0 ? Math.max(0, Math.min(100, (1 - sg.remain / sg.hours) * 100)) : (sg.count ? sg.done / sg.count * 100 : 0);
+    sg.allDone = sg.count > 0 && sg.done === sg.count; sg.cur = !!nx && stageOf(nx)[0] === sg.name; cum += sg.remain;
+    sg.eta = sg.allDone ? "Done" : (wkT > 0 ? "about " + parse(addDays(todayIso(), Math.ceil(cum / wkT) * 7)).toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "");
+  }
+  return { all, open, stages, nextId: nx && nx.id, nextG: nx && nx.g };
+}
+function outlineMd(trId) {
+  const pd = planData(trId, logged()), out = [`# ${track(trId).name}`];
+  for (const sg of pd.stages) {
+    out.push("", `## ${sg.name}  (${sg.done}/${sg.count}, ${hnum(sg.hours)} h)`);
+    for (const sub of sg.subs) {
+      if (sub.label) out.push("", `### ${sub.label}`);
+      for (const i of sub.items) out.push(`- [${i.st === "done" ? "x" : " "}] ${i.id}  ${i.t}${i.h > 0 ? ` (${hnum(i.h)} h)` : ""}${i.st === "later" ? "  [set aside]" : ""}`);
+    }
+  }
+  return out.join("\n");
+}
+function boardHtml(trId, L, pd) {
+  if (pd.nextG && !UI.touchedG) UI.openG.add(trId + "|" + pd.nextG);
+  UI.colShut = UI.colShut || new Set(); UI.colOpen = UI.colOpen || new Set();
+  const narrow = window.matchMedia("(max-width:700px)").matches;   // on a phone only the current stage starts open
+  return `<div class="board">` + pd.stages.map(sg => {
+    const ck = trId + "#" + sg.name, shut = UI.colShut.has(ck) || ((sg.allDone || (narrow && !sg.cur)) && !UI.colOpen.has(ck));
+    const subs = shut ? "" : sg.subs.map(sub => {
+      const key = trId + "|" + sub.g, d = sub.items.filter(i => i.st === "done").length, hh = sub.items.reduce((a, i) => a + i.h, 0);
+      const vis = sub.items.filter(i => UI.showDone || i.st !== "done"), isOpen = UI.openG.has(key);
+      return `<details class="grp" data-g="${esc(key)}"${isOpen ? " open" : ""}><summary>${esc(sub.label || "Items")}<span class="num">${d}/${sub.items.length} · ${hnum(hh)} h</span></summary>` +
+        (isOpen ? (vis.length ? vis.map(i => itemRow(i, L, i.id === pd.nextId)).join("") : `<div class="empty" style="padding:8px 13px">All finished here.</div>`) : "") + `</details>`;
+    }).join("");
+    return `<section class="col${shut ? " shut" : ""}${sg.cur ? " cur" : ""}"><header class="col-h"><button class="col-t" data-act="col-toggle" data-k="${esc(ck)}" aria-expanded="${!shut}" title="${shut ? "Open" : "Collapse"} ${esc(sg.name)}"><span class="col-n">${esc(sg.name)}</span><span class="meta num">${sg.done}/${sg.count} · ${hnum(sg.hours)} h</span></button><div class="bar"><i style="width:${sg.pct}%"></i></div></header>${subs}</section>`;
+  }).join("") + `</div>`;
+}
 function viewPlan() {
-  const trId = S.planTrack || "sw", tr = track(trId), s = trackStats(trId), L = logged(), h = [];
-  h.push(`<div><h2>Plan</h2><p class="lede">Each track is a queue. Work the top item; move things when the order is wrong.</p></div>`);
-  h.push(`<div class="chips">` + SEED.tracks.filter(t => !t.recurring).map(t => `<button data-act="plan-track" data-tr="${t.id}" aria-pressed="${t.id === trId}">${esc(t.name)}</button>`).join("") + `</div>`);
-  h.push(`<div class="card trk" style="--tc:var(--c-${trId})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="meta num">${s.done.length} of ${s.all.length} items done</span></div>
-    <div class="meta num">${s.remain > 0 ? `${hnum(s.remain)} h of planned work left${s.weeks ? `, about ${s.weeks} weeks at ${hnum(s.wkT)} h a week` : ""}` : "No planned hours left in this queue"}</div>
-    ${s.open.length ? `<div class="note">Top of the queue: ${s.open.slice(0, 3).map(i => esc(i.t)).join(" → ")}</div>` : ""}${queueTools()}</div>`);
-  return h.join("") + queueHtml(trId, L);
+  const trId = S.planTrack || "sw", tr = track(trId), s = trackStats(trId), L = logged(), pd = planData(trId, L), view = UI.planView || "dash", nx = s.open[0];
+  const head = `<div class="today-head">${sketch("plan")}<div class="th-text"><h2>Plan</h2><p class="lede">Each track is a queue of stages. Work the top item; move things when the order is wrong.</p></div></div>`;
+  const tabs = `<div class="ftabs" role="tablist" aria-label="Tracks">` + SEED.tracks.filter(t => !t.recurring).map(t => `<button class="ftab" role="tab" data-act="plan-track" data-tr="${t.id}" style="--tc:var(--c-${t.id})" aria-selected="${t.id === trId}">${ico(t.id, 16)}${esc(t.name)}<span class="meta num">${Math.round(trackStats(t.id).pct)}%</span></button>`).join("") + `</div>`;
+  let body;
+  if (view === "road") {
+    const curS = pd.stages.find(x => x.cur);
+    body = `<div class="road">` + pd.stages.map((sg, n) => `<div class="step${sg.allDone ? " done" : sg.cur ? " cur" : ""}"><div class="node">${sg.allDone ? "✓" : n + 1}</div><b>${esc(sg.name)}</b><span class="meta num">${sg.done}/${sg.count} items · ${hnum(sg.hours)} h</span><div class="bar"><i style="width:${sg.pct}%"></i></div><span class="meta num">${sg.cur ? "You are here · " : ""}${esc(sg.eta)}</span></div>`).join("") + `</div>` +
+      (curS && curS.subs.some(x => x.label) ? `<div class="row"><span class="meta">Inside ${esc(curS.name)}:</span>${curS.subs.map(x => { const d = x.items.filter(i => i.st === "done").length; return `<span class="tag${d === x.items.length ? " good" : ""}">${esc(x.label || "Items")} ${d}/${x.items.length}</span>`; }).join("")}</div>` : "");
+  } else if (view === "outline") {
+    body = `<div class="row" style="justify-content:space-between"><span class="meta">The whole path as a checklist. Paste it anywhere that reads Markdown.</span><button class="btn sm" data-act="copy-outline">Copy as Markdown</button></div><pre class="md" tabindex="0">${esc(outlineMd(trId))}</pre>`;
+  } else {
+    const wr = weekStatus(monday(todayIso())).rows.find(r => r.tr.id === trId), lm = nx ? (L[nx.id] || 0) : 0;
+    body = `<div class="stats"><div class="stat"><b class="num">${Math.round(s.pct)}%</b><span>of planned hours done</span></div>
+      <div class="stat"><b class="num">${hrs(wr.mins)}${wr.target > 0 ? ` / ${hnum(wr.target)}` : ""}</b><span>hours this week</span></div>
+      <div class="stat"><b class="num">${hrs(s.mins)}</b><span>hours logged in total</span></div>
+      <div class="stat"><b class="num">${hnum(s.remain)}</b><span>planned hours left</span></div>
+      <div class="stat"><b class="num">${s.weeks ? esc(s.finish) : "—"}</b><span>${s.weeks ? `finish at ${hnum(s.wkT)} h a week` : (s.remain > 0 ? "no weekly hours set" : "queue finished")}</span></div></div>
+      <div class="pd2">${nx ? `<div class="nextbox"><div class="card-h">${eb("today", "Next up")}<span class="meta num">${nx.h > 0 ? `${hrs(lm)} of ${hnum(nx.h)} h` : ""}</span></div><h3>${esc(nx.t)}</h3><div class="meta"><code>${esc(nx.id)}</code>${lessonTag(nx)}</div>${nx.next ? `<div class="note">Pick up at: ${esc(nx.next)}</div>` : ""}
+        <div class="row" style="margin-top:auto"><button class="btn pri" data-act="start" data-tr="${trId}" data-it="${esc(nx.id)}">Start session</button><button class="btn" data-act="item-done" data-it="${esc(nx.id)}">Mark done</button></div></div>` : `<div class="nextbox"><h3>Queue finished</h3></div>`}
+      <div class="sbars">${pd.stages.map(sg => `<div class="wkrow${sg.cur ? " cur" : ""}"><span class="clamp1">${esc(sg.name)}</span><div class="bar"><i style="width:${sg.pct}%"></i></div><span class="r num">${sg.done}/${sg.count}</span></div>`).join("")}</div></div>`;
+  }
+  const seg = `<div class="seg" role="group" aria-label="Summary view">` + [["dash", "Dashboard"], ["road", "Roadmap"], ["outline", "Outline"]].map(([v, n]) => `<button data-act="plan-view" data-v="${v}" aria-pressed="${v === view}">${n}</button>`).join("") + `</div>`;
+  return head + tabs + `<div class="folder" style="--tc:var(--c-${trId})"><section class="psum"><div class="card-h" style="align-items:center"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="rico tc" style="background:var(--sunk)">${ico(trId, 22)}</span><div><h3>${esc(tr.name)}</h3><p class="meta num">${s.done.length} of ${s.all.length} items · ${hnum(s.remain)} h left${s.weeks ? ` · finish about ${s.finish}` : ""}</p></div></div>${seg}</div>${body}</section>
+    <hr><div class="card-h" style="align-items:center">${eb("layers", `Stages (${pd.stages.length})`)}${queueTools()}</div>${boardHtml(trId, L, pd)}</div>`;
 }
 function itemRow(i, L, isNext) {
   const lm = L[i.id] || 0, openI = UI.openI === i.id;
   return `<details class="item st-${i.st}" data-i="${esc(i.id)}"${openI ? " open" : ""}><summary><span class="dot"></span><span class="ttl">${esc(i.t)}</span><span class="num meta">${i.h > 0 ? `${hrs(lm)} / ${hnum(i.h)} h` : (lm ? hrs(lm) + " h" : "")}</span>
-    <span class="sub"><code>${esc(i.id)}</code>${isNext ? `<span class="tag sug">Next</span>` : ""}${i.st === "later" ? `<span class="tag">Set aside</span>` : ""}${i.st === "open" && !i.c ? `<span class="tag warn">Lesson to request</span>` : ""}</span></summary>` +
+    <span class="sub"><code>${esc(i.id)}</code>${isNext ? `<span class="tag sug">Next</span>` : ""}${i.st === "later" ? `<span class="tag">Set aside</span>` : ""}${i.prod ? `<span class="tag${i.st === "done" ? " good" : ""}">${i.st === "done" ? "Finished product · built with AI" : "Product"}</span>` : ""}${i.st === "open" && !i.c ? `<span class="tag warn">Lesson to request</span>` : ""}</span></summary>` +
     (openI ? `<div class="acts">${i.n ? `<div class="note">${esc(i.n)}</div>` : ""}${i.next ? `<div class="note">Pick up at: ${esc(i.next)}</div>` : ""}${i.src ? `<div class="meta">Source: ${esc(i.src)}</div>` : ""}
       <div class="row">${i.st === "open" ? `<button class="btn sm pri" data-act="start" data-tr="${i.tr}" data-it="${esc(i.id)}">Start</button>
         <button class="btn sm" data-act="item-top" data-it="${esc(i.id)}">Do next</button>
@@ -695,30 +1016,44 @@ function itemRow(i, L, isNext) {
 }
 
 function viewIdeas() {
-  const parked = S.ideas.filter(i => i.st === "parked").sort((a, b) => b.ts - a.ts), dec = S.ideas.filter(i => i.st !== "parked").sort((a, b) => (b.u || 0) - (a.u || 0)), h = [];
-  h.push(`<div><h2>Ideas</h2><p class="lede">Every new idea lands here first. It stays safe, and the plan stays intact until you decide.</p></div>
-    <form class="inline" data-form="capture"><input type="text" name="text" id="cap-ideas" placeholder="A new idea, in one line" required maxlength="300" aria-label="New idea"><button class="btn pri" type="submit">Park</button></form>`);
-  h.push(`<div class="sect"><h2>Parked (${parked.length})</h2></div><div class="card">` + (parked.length ? parked.map(i => `<div class="idea"><div>${esc(i.text)}</div><div class="meta">Parked ${fmtDate(iso(new Date(i.ts)))}</div>
-    <div class="row"><button class="btn sm" data-act="idea-promote" data-id="${i.id}">Promote: do it next</button><button class="btn sm" data-act="idea-schedule" data-id="${i.id}">Schedule: end of a queue</button><button class="btn sm quiet" data-act="idea-drop" data-id="${i.id}">Drop</button></div></div>`).join("") : `<div class="empty">Nothing parked. When something pulls at you mid-session, write it here and carry on.</div>`) + `</div>`);
-  if (dec.length) h.push(`<div class="sect"><h2>Decided</h2></div><div class="card">` + dec.slice(0, 30).map(i => `<div class="idea"><div class="${i.st === "dropped" ? "done-t" : ""}">${esc(i.text)}</div><div class="meta"><span class="tag">${i.st === "promoted" ? "Promoted" : i.st === "scheduled" ? "Scheduled" : "Dropped"}</span>${i.tr ? esc(track(i.tr).name) : ""}${i.gave ? ` · gave way: ${esc(i.gave)}` : ""}${i.st === "dropped" ? `<button class="btn sm quiet" data-act="idea-restore" data-id="${i.id}">Restore</button>` : ""}</div></div>`).join("") + `</div>`);
-  return h.join("");
+  const now = Date.now(), age = i => Math.floor((now - i.ts) / 864e5), ageTxt = n => n < 1 ? "today" : n + " d ago";
+  const parked = S.ideas.filter(i => i.st === "parked").sort((a, b) => b.ts - a.ts);
+  const inplan = S.ideas.filter(i => i.st === "promoted" || i.st === "scheduled").sort((a, b) => (b.u || 0) - (a.u || 0));
+  const dropped = S.ideas.filter(i => i.st === "dropped").sort((a, b) => (b.u || 0) - (a.u || 0));
+  const oldest = parked.length ? Math.max(...parked.map(age)) : 0;
+  const head = `<div class="today-head">${sketch("bulb")}<div class="th-text"><h2>Ideas</h2><p class="lede">Every new idea lands here first. It stays safe, and the plan stays intact until you decide.</p></div></div>`;
+  const h = [`<article class="card capbar"><form class="inline" data-form="capture"><input type="text" name="text" id="cap-ideas" placeholder="A new idea, in one line" required maxlength="300" aria-label="New idea"><button class="btn pri lg" type="submit">Park it</button></form>
+    <div class="hsteps"><span><b class="hn">1</b>Park it the moment it appears</span><span><b class="hn">2</b>Decide at the weekly close</span><span><b class="hn">3</b>Promote only by choosing what gives way</span></div></article>`];
+  h.push(`<article class="card id-a"><div class="card-h">${eb("ideas", `Parked (${parked.length})`)}<span class="meta num">${parked.length ? `oldest ${ageTxt(oldest)}` : ""}</span></div>` + (parked.length ?
+    `<div class="ilist">` + parked.map(i => `<div class="icard"><div>${esc(i.text)}</div><div class="meta">Parked ${fmtDate(iso(new Date(i.ts)))} · ${ageTxt(age(i))}${age(i) > 7 ? ` <span class="tag warn">Waiting over a week</span>` : ""}</div>
+      <div class="row"><button class="btn sm pri" data-act="idea-promote" data-id="${i.id}">Promote</button><button class="btn sm" data-act="idea-schedule" data-id="${i.id}">Schedule</button><button class="btn sm quiet" data-act="idea-drop" data-id="${i.id}">Drop</button></div></div>`).join("") + `</div>
+     <div class="meta" style="margin-top:auto">Promote puts it at the top of a queue. Schedule adds it to the end, so nothing current moves.</div>` :
+    `<div class="empty">Nothing parked. When something pulls at you mid-session, write it here and carry on.</div>`) + `</article>`);
+  h.push(`<article class="card id-b"><div class="card-h">${eb("plan", `In the plan (${inplan.length})`)}</div>` + (inplan.length ? inplan.slice(0, 30).map(i => `<div class="icard q"><div>${esc(i.text)}</div><div class="meta"><span class="tag good">${i.st === "promoted" ? "Promoted" : "Scheduled"}</span>${i.tr ? `<span class="chip" style="--tc:var(--c-${i.tr})">${esc(track(i.tr).name)}</span>` : ""}</div>${i.gave ? `<div class="meta">Gave way: ${esc(i.gave)}</div>` : ""}</div>`).join("") : `<div class="empty">Ideas you promote or schedule show here.</div>`) + `</article>`);
+  h.push(`<article class="card id-c"><div class="card-h">${eb("close", `Dropped (${dropped.length})`)}</div>` + (dropped.length ? dropped.slice(0, 30).map(i => `<div class="icard q"><div class="done-t">${esc(i.text)}</div><div class="row"><button class="btn sm quiet" data-act="idea-restore" data-id="${i.id}">Restore</button></div></div>`).join("") : `<div class="empty">Dropping is a decision too. Dropped ideas can be restored from here.</div>`) + `</article>`);
+  return head + `<div class="dash idpage">${h.join("")}</div>`;
 }
 
 function viewProof() {
-  const h = [], cr = S.criteria.filter(c => !c.del), allDone = cr.length && cr.every(c => c.done);
-  h.push(`<div><h2>Proof</h2><p class="lede">What you will be able to show in six months, and what must be true before the startup resumes. These are drafts: edit them until they are yours.</p></div>`);
-  for (const tr of SEED.tracks) {
-    const ps = S.proofs.filter(p => p.tr === tr.id && !p.del); if (!ps.length) continue;
-    h.push(`<div class="card trk" style="--tc:var(--c-${tr.id})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="meta num">${ps.filter(p => p.done).length}/${ps.length}</span></div>` +
-      ps.map(p => `<div class="prow"><input type="checkbox" id="pc-${p.id}" data-chg="proof-done" data-id="${p.id}"${p.done ? " checked" : ""}><label for="pc-${p.id}" class="${p.done ? "done-t" : ""}" style="color:var(--ink);font-size:14.5px;flex-direction:row;justify-content:space-between;gap:8px"><span>${esc(p.t)}</span></label>
-        <input type="text" id="pe-${p.id}" data-chg="proof-ev" data-id="${p.id}" value="${esc(p.ev)}" placeholder="Evidence: a link, file name or date" aria-label="Evidence"></div>`).join("") + `</div>`);
-  }
-  h.push(`<form class="inline" data-form="add-proof"><select name="tr" id="np-tr" style="max-width:150px" aria-label="Track">${trackOpts("sw")}</select><input type="text" name="t" id="np-t" placeholder="Add a proof" required maxlength="200" aria-label="New proof"><button class="btn" type="submit">Add</button></form>`);
-  h.push(`<div class="sect"><h2>Before the startup resumes</h2></div>`);
-  if (allDone) h.push(`<div class="banner good"><b>Every criterion is met.</b> Set the date and resume the startup build.</div>`);
-  h.push(`<div class="card">` + cr.map(c => `<div class="prow"><input type="checkbox" id="cc-${c.id}" data-chg="crit-done" data-id="${c.id}"${c.done ? " checked" : ""}><label for="cc-${c.id}" class="${c.done ? "done-t" : ""}" style="color:var(--ink);font-size:14.5px;flex-direction:row;justify-content:space-between;gap:8px"><span>${esc(c.t)}</span><button class="btn sm quiet" type="button" data-act="crit-del" data-id="${c.id}">Remove</button></label></div>`).join("") +
-    `<form class="inline" data-form="add-crit" style="margin-top:8px"><input type="text" name="t" id="nc-t" placeholder="Add a criterion" required maxlength="200" aria-label="New criterion"><button class="btn" type="submit">Add</button></form></div>`);
-  return h.join("");
+  const cr = S.criteria.filter(c => !c.del), crDone = cr.filter(c => c.done).length, allDone = cr.length && crDone === cr.length;
+  const psAll = S.proofs.filter(p => !p.del), L = logged();
+  const head = `<div class="today-head">${sketch("proof")}<div class="th-text"><h2>Proof</h2><p class="lede num">${psAll.filter(p => p.done).length} of ${psAll.length} proofs in hand. What you can show in six months, and what must be true before the startup resumes.</p></div></div>`;
+  const cards = SEED.tracks.filter(t => !t.recurring).map(tr => {
+    const ps = psAll.filter(p => p.tr === tr.id), d = ps.filter(p => p.done).length;
+    return `<article class="card trk" style="--tc:var(--c-${tr.id})"><div class="card-h" style="align-items:center"><span class="tname">${ico(tr.id, 18)}${esc(tr.name)}</span><span class="meta num">${d} of ${ps.length}</span></div><div class="bar"><i style="width:${ps.length ? d / ps.length * 100 : 0}%"></i></div><div>` +
+      ps.map(p => `<div class="prow"><input type="checkbox" id="pc-${p.id}" data-chg="proof-done" data-id="${p.id}"${p.done ? " checked" : ""}><label for="pc-${p.id}" class="${p.done ? "done-t" : ""}"><span>${esc(p.t)}</span></label>
+        <input type="text" id="pe-${p.id}" data-chg="proof-ev" data-id="${p.id}" value="${esc(p.ev)}" placeholder="Evidence: a link, file name or date" aria-label="Evidence"></div>`).join("") +
+      `</div><form class="inline" data-form="add-proof" style="margin-top:auto"><input type="hidden" name="tr" value="${tr.id}"><input type="text" name="t" id="np-t-${tr.id}" placeholder="Add a proof" required maxlength="200" aria-label="New ${esc(tr.name)} proof"><button class="btn" type="submit">Add</button></form></article>`;
+  }).join("");
+  const prods = S.items.filter(i => i.prod && i.st !== "removed").sort((a, b) => a.o - b.o);
+  const right = `<article class="card"><div class="card-h">${eb("proof", "Before the startup resumes")}<span class="tag${allDone ? " good" : ""}">${allDone ? "Ready" : "Not yet"}</span></div>
+      <div class="big num">${crDone}<small>of ${cr.length} met</small></div><div class="bar"><i style="width:${cr.length ? crDone / cr.length * 100 : 0}%"></i></div>
+      ${allDone ? `<div class="banner good"><b>Every criterion is met.</b> Set the date and resume the startup build.</div>` : ""}<div>` +
+      cr.map(c => `<div class="prow"><input type="checkbox" id="cc-${c.id}" data-chg="crit-done" data-id="${c.id}"${c.done ? " checked" : ""}><label for="cc-${c.id}" class="${c.done ? "done-t" : ""}"><span>${esc(c.t)}</span><button class="btn sm quiet" type="button" data-act="crit-del" data-id="${c.id}">Remove</button></label></div>`).join("") +
+      `</div><form class="inline" data-form="add-crit"><input type="text" name="t" id="nc-t" placeholder="Add a criterion" required maxlength="200" aria-label="New criterion"><button class="btn" type="submit">Add</button></form></article>
+    <article class="card"><div class="card-h">${eb("layers", "Products")}<span class="meta num">${prods.filter(i => i.st === "done").length} of ${prods.length} finished</span></div>` +
+      (prods.length ? prods.map(i => `<div class="arow"><span>${esc(i.t)}</span><span class="tag${i.st === "done" ? " good" : ""}">${i.st === "done" ? "Finished · built with AI" : (L[i.id] ? `${hrs(L[i.id])} h so far` : "Not started")}</span></div>`).join("") : `<div class="empty">Finished products appear here.</div>`) + `</article>`;
+  return head + `<div class="dash prpage"><div class="pr-a pgrid">${cards}</div><div class="pr-b">${right}</div></div>`;
 }
 
 function viewMore() {
@@ -751,6 +1086,7 @@ function render() {
   if (!VIEWS[S.view]) S.view = "home";
   applyTheme();
   renderNav();
+  renderAttn();
   $("#main").dataset.view = S.view;
   $("#main").innerHTML = VIEWS[S.view]();
   tick();
@@ -760,15 +1096,15 @@ function tick() {
   if (S && S.timer) {
     const s = Math.floor((Date.now() - S.timer.start) / 1000), hh = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60;
     const txt = (hh ? hh + ":" : "") + pad(mm) + ":" + pad(ss);
-    if (c) c.textContent = txt; if (c2) c2.textContent = txt; document.title = "● " + txt + " UNITY";
-  } else if (document.title !== "UNITY") document.title = "UNITY";
+    if (c) c.textContent = txt; if (c2) c2.textContent = txt; document.title = "● " + txt + " HAMWE";
+  } else if (document.title !== "HAMWE") document.title = "HAMWE";
 }
 setInterval(tick, 1000);
 
 /* ---------- forms ---------- */
 const FORMS = {
   capture(d, f) { const text = (d.text || "").trim(); if (!text) return; S.ideas.push(touch({ id: uid("I"), ts: Date.now(), text, st: "parked" })); save(); toast("Parked. Back to the session."); },
-  "close-week"(d) { S.reviews[monday(todayIso())] = { ts: Date.now(), note: (d.note || "").trim() }; save(); toast("Week closed"); },
+  "close-week"(d) { S.reviews[viewWk()] = { ts: Date.now(), note: (d.note || "").trim() }; save(); toast("Week closed"); },
   "add-proof"(d) { S.proofs.push(touch({ id: uid("PR"), tr: d.tr, t: d.t.trim(), done: 0, ev: "" })); save(); },
   "add-crit"(d) { S.criteria.push(touch({ id: uid("CR"), t: d.t.trim(), done: 0 })); save(); },
   pause(d) {
@@ -792,14 +1128,14 @@ function download(name, text, type) {
 function backupText() { const c = JSON.parse(JSON.stringify(S)); c.timer = null; c.format = "unity-backup"; c.exportedAt = new Date().toISOString(); return JSON.stringify(c); }
 function mergeById(a, b) { const m = new Map(a.map(x => [x.id, x])); for (const y of b || []) { const x = m.get(y.id); if (!x || (y.u || 0) > (x.u || 0)) m.set(y.id, y); } return [...m.values()]; }
 function importData(o, mode) {
-  if (!o || !Array.isArray(o.items) || !Array.isArray(o.sessions)) { toast("That file is not a UNITY backup."); return; }
+  if (!o || !Array.isArray(o.items) || !Array.isArray(o.sessions)) { toast("That file is not a HAMWE backup."); return; }
   if (mode === "replace") { const keepTimer = S.timer; S = o; S.timer = keepTimer; delete S.format; delete S.exportedAt; }
   else {
     for (const k of ["items", "sessions", "ideas", "proofs", "criteria"]) S[k] = mergeById(S[k], o[k]);
     S.reviews = Object.assign({}, o.reviews, S.reviews);
     if ((o.u || 0) > (S.u || 0)) { S.settings = o.settings; S.pause = o.pause; }
   }
-  save(); render(); toast(mode === "replace" ? "Backup restored" : "Backups merged");
+  migrate(); save(); render(); toast(mode === "replace" ? "Backup restored" : "Backups merged");
 }
 function editItemDlg(i) {
   const isNew = !i, trId = isNew ? S.planTrack : i.tr;
@@ -841,7 +1177,7 @@ function ideaDecide(id, kind) {
   UI.giveOpts = giveOpts;
 }
 const ACT = {
-  view(el) { if (el.closest("#rail")) $("#rail").classList.add("shut"); S.view = el.dataset.v; save(); render(); window.scrollTo(0, 0); },
+  view(el) { if (el.closest("#rail")) $("#rail").classList.add("shut"); S.view = el.dataset.v; save(); render(); toTop(); },
   "dlg-close"() { closeDlg(); },
   start(el) { const tr = el.dataset.tr, it = el.dataset.it; startTimer(tr, it, it ? "" : track(tr).label, false); },
   stop() { closeSessionDlg(); },
@@ -858,7 +1194,18 @@ const ACT = {
       });
   },
   "open-plan"(el) { ACT.track(el); },
-  track(el) { if (el.closest("#rail")) $("#rail").classList.add("shut"); S.planTrack = el.dataset.tr; S.view = "track"; UI.touchedG = false; UI.openI = null; save(); render(); window.scrollTo(0, 0); },
+  track(el) { if (el.closest("#rail")) $("#rail").classList.add("shut"); S.planTrack = el.dataset.tr; S.view = "track"; UI.touchedG = false; UI.openI = null; save(); render(); toTop(); },
+  "wk-nav"(el) { const d = +el.dataset.dir; UI.wkOff = d === 0 ? 0 : Math.max(0, (UI.wkOff || 0) + d); render(); },
+  "plan-view"(el) { UI.planView = el.dataset.v; render(); },
+  "col-toggle"(el) {
+    const k = el.dataset.k, shut = el.getAttribute("aria-expanded") === "false";
+    UI.colShut = UI.colShut || new Set(); UI.colOpen = UI.colOpen || new Set();
+    if (shut) { UI.colOpen.add(k); UI.colShut.delete(k); } else { UI.colShut.add(k); UI.colOpen.delete(k); }
+    render();
+  },
+  "copy-outline"() { const t = outlineMd(S.planTrack || "sw"); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Outline copied")).catch(() => toast("Copy was blocked by the browser.")); },
+  attn() { UI.attn = !UI.attn; render(); },
+  "attn-go"(el) { UI.attn = false; if (el.dataset.tr) ACT.track(el); else ACT.view(el); },
   theme() { const o = ["auto", "light", "dark"]; S.settings.theme = o[(o.indexOf(S.settings.theme || "auto") + 1) % 3]; save(); render(); toast("Theme: " + S.settings.theme); },
   "quick-idea"() {
     openDlg(`<h2>Park an idea</h2><label>In one line<input type="text" name="text" id="qi-t" required maxlength="300" autofocus></label>
@@ -883,7 +1230,7 @@ const ACT = {
   "idea-restore"(el) { const i = S.ideas.find(x => x.id === el.dataset.id); i.st = "parked"; touch(i); save(); render(); },
   "crit-del"(el) { const c = S.criteria.find(x => x.id === el.dataset.id); c.del = 1; touch(c); save(); render(); },
   "del-session"(el) { if (!arm(el.dataset.id)) return; const s = S.sessions.find(x => x.id === el.dataset.id); s.del = 1; touch(s); save(); render(); },
-  "reopen-week"() { delete S.reviews[monday(todayIso())]; save(); render(); },
+  "reopen-week"() { delete S.reviews[viewWk()]; save(); render(); },
   "end-pause"() { if (S.pause) { const p = S.pause, y = addDays(todayIso(), -1); S.pauses.push({ ...p, until: p.until < todayIso() ? p.until : y }); S.pause = null; save(); render(); toast("Full plan resumed"); } },
   export() { download(`unity-backup-${todayIso()}.json`, backupText(), "application/json"); S.lastExport = Date.now(); save(); render(); },
   "export-csv"() {
@@ -926,6 +1273,7 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && S) 
   S = prev && Array.isArray(prev.items) ? prev : fresh();
   if (!prev) DB.put(S);
   // New seed items added in a later version are appended without touching existing data.
+  migrate();
   const have = new Set(S.items.map(i => i.id));
   for (const x of SEED.items) if (!have.has(x.id)) S.items.push({ ...x, u: 0 });
   for (const tr of SEED.tracks) if (!(tr.id in S.settings.targets)) S.settings.targets[tr.id] = tr.target;
