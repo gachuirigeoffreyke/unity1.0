@@ -5,156 +5,240 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UNITY</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#17354d">
+<meta name="theme-color" content="#161719">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
+@font-face{font-family:"Inter";src:url("inter.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 :root{
-  /* Layout idea: a site daybook. One column of today's work orders, each with its track colour on the left edge. */
-  --bg:#f3f5f3; --surface:#ffffff; --sunk:#e9ece9; --ink:#1a2127; --muted:#5b6670; --line:#d6dbd7;
-  --accent:#1c5a86; --on-accent:#ffffff; --good:#237a57; --warn:#9a6312; --warn-bg:#fbf1dc;
-  --c-sw:#2a67ad; --c-str:#a4572a; --c-ai:#7448b0; --c-ent:#22805d; --c-rev:#5f6b76; --c-build:#b03f66;
-  --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+  /* Layout: a control desk. Tracks on an icon rail at the left, working views along the top, glass panels on a quiet field. */
+  --bg:#ecedef; --surface:rgba(255,255,255,.74); --solid:#ffffff; --field:#ffffff; --sunk:rgba(20,22,26,.07); --ink:#15171a; --muted:#646a73; --line:rgba(20,22,26,.11);
+  --pri:#15171a; --on-pri:#ffffff; --accent:#2f66d0; --on-accent:#ffffff; --good:#1c7a53; --warn:#8a570b; --warn-bg:rgba(214,158,46,.18); --danger:#b3372f;
+  --c-sw:#2f66d0; --c-str:#b5622c; --c-ai:#7a4cc2; --c-ent:#1f8a62; --c-rev:#68717c; --c-build:#b8436c;
+  --shadow:0 1px 0 rgba(255,255,255,.6) inset,0 10px 30px -18px rgba(20,22,26,.35);
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
   --mono:ui-monospace,"SF Mono","Ubuntu Mono","Roboto Mono",Menlo,Consolas,monospace;
-  --r:10px;
+  --r:16px; --rail:64px; --top:58px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --bg:#12171b; --surface:#1b2227; --sunk:#151b20; --ink:#e6eaed; --muted:#98a4ad; --line:#2b343b;
-    --accent:#6eb1e0; --on-accent:#0d1a24; --good:#5cc497; --warn:#e2b25c; --warn-bg:#33290f;
-    --c-sw:#6aa6e6; --c-str:#dd9163; --c-ai:#b08ee6; --c-ent:#5cc497; --c-rev:#9aa6b0; --c-build:#e585a6;
+    --bg:#161719; --surface:rgba(40,41,45,.72); --solid:#232427; --field:rgba(255,255,255,.05); --sunk:rgba(255,255,255,.07); --ink:#f2f3f4; --muted:#9a9fa8; --line:rgba(255,255,255,.09);
+    --pri:#ececee; --on-pri:#161719; --accent:#8fb2ff; --on-accent:#10131a; --good:#70d3a5; --warn:#e8bb68; --warn-bg:rgba(232,187,104,.13); --danger:#f08a80;
+    --c-sw:#8fb2ff; --c-str:#e39a6b; --c-ai:#b99cf0; --c-ent:#70d3a5; --c-rev:#a3abb5; --c-build:#ee8fb0;
+    --shadow:0 1px 0 rgba(255,255,255,.05) inset,0 14px 34px -20px rgba(0,0,0,.7);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg:#12171b; --surface:#1b2227; --sunk:#151b20; --ink:#e6eaed; --muted:#98a4ad; --line:#2b343b;
-  --accent:#6eb1e0; --on-accent:#0d1a24; --good:#5cc497; --warn:#e2b25c; --warn-bg:#33290f;
-  --c-sw:#6aa6e6; --c-str:#dd9163; --c-ai:#b08ee6; --c-ent:#5cc497; --c-rev:#9aa6b0; --c-build:#e585a6;
+  --bg:#161719; --surface:rgba(40,41,45,.72); --solid:#232427; --field:rgba(255,255,255,.05); --sunk:rgba(255,255,255,.07); --ink:#f2f3f4; --muted:#9a9fa8; --line:rgba(255,255,255,.09);
+  --pri:#ececee; --on-pri:#161719; --accent:#8fb2ff; --on-accent:#10131a; --good:#70d3a5; --warn:#e8bb68; --warn-bg:rgba(232,187,104,.13); --danger:#f08a80;
+  --c-sw:#8fb2ff; --c-str:#e39a6b; --c-ai:#b99cf0; --c-ent:#70d3a5; --c-rev:#a3abb5; --c-build:#ee8fb0;
+  --shadow:0 1px 0 rgba(255,255,255,.05) inset,0 14px 34px -20px rgba(0,0,0,.7);
 }
+:root[data-theme="light"]{color-scheme:light}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--font);-webkit-text-size-adjust:100%}
-h1,h2,h3{margin:0;text-wrap:balance;line-height:1.25}
-h2{font-size:20px} h3{font-size:16px;font-weight:600}
+body{color:var(--ink);font:15px/1.45 var(--font);-webkit-text-size-adjust:100%;
+  background:radial-gradient(900px 520px at 88% -8%,color-mix(in srgb,var(--c-ai) 13%,transparent),transparent 70%),radial-gradient(760px 520px at 4% 104%,color-mix(in srgb,var(--c-str) 12%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.2;letter-spacing:-.015em}
+h1{font-size:30px;font-weight:700;letter-spacing:-.025em}
+h2{font-size:24px;font-weight:700;letter-spacing:-.02em}
+h3{font-size:16.5px;font-weight:600}
 p{margin:0}
 code,.mono{font-family:var(--mono);font-size:12.5px}
 .num{font-variant-numeric:tabular-nums}
 button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg{flex:none}
 
-.app{min-height:100%;display:grid;grid-template-rows:auto 1fr auto}
-.top{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.brand{font-weight:700;letter-spacing:.14em;font-size:14px}
-.topmeta{flex:1;min-width:0;display:flex;align-items:center;gap:10px;justify-content:flex-end;color:var(--muted);font-size:13px}
+/* ---- shell ---- */
+.glass{background:var(--surface);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);z-index:30;display:none;flex-direction:column;gap:4px;padding:12px 10px;border-right:1px solid var(--line);overflow:hidden;transition:width .16s ease;background:var(--surface);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
+.rail:hover,.rail:has(:focus-visible){width:236px;box-shadow:18px 0 40px -24px rgba(0,0,0,.45)}
+.ritem{display:flex;align-items:center;gap:12px;border:0;background:none;border-radius:12px;padding:0;height:44px;width:100%;text-align:left;color:var(--muted);white-space:nowrap}
+.ritem:hover{background:var(--sunk);color:var(--ink)}
+.ritem[aria-current="page"]{background:var(--sunk);color:var(--ink)}
+.rico{width:44px;height:44px;display:grid;place-items:center;flex:none;border-radius:12px}
+.rico.tc{color:var(--tc)}
+.ritem[aria-current="page"] .rico{box-shadow:inset 0 0 0 1.5px var(--tc,var(--line))}
+.rlbl{display:flex;flex-direction:column;font-weight:600;font-size:14px;line-height:1.2;opacity:0;transition:opacity .12s}
+.rlbl small{font-weight:400;font-size:12px;color:var(--muted)}
+.rail:hover .rlbl,.rail:has(:focus-visible) .rlbl{opacity:1}
+.rail.shut,.rail.shut:hover{width:var(--rail);box-shadow:none}
+.rail.shut .rlbl,.rail.shut:hover .rlbl{opacity:0}
+.rsep{height:1px;background:var(--line);margin:6px 4px}
+.top{position:sticky;top:0;z-index:20;height:var(--top);display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--surface);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
+.brand{display:flex;align-items:center;gap:9px;border:0;background:none;font-weight:700;letter-spacing:.16em;font-size:13.5px;padding:6px 4px}
+.brand i{width:22px;height:22px;border-radius:7px;background:var(--pri);display:grid;place-items:center}
+.brand i::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--on-pri)}
+.tabs{display:none;gap:2px;margin-left:8px}
+.tabs button{display:flex;align-items:center;gap:7px;border:0;background:none;border-radius:10px;padding:8px 12px;color:var(--muted);font-size:14px;font-weight:500}
+.tabs button:hover{color:var(--ink);background:var(--sunk)}
+.tabs button[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:600}
+.topmeta{flex:1;min-width:0;display:flex;align-items:center;gap:8px;justify-content:flex-end;color:var(--muted);font-size:13px}
+.wkmeta{display:none;align-items:center;gap:10px;margin-right:6px}
 .meter{width:110px;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;flex:none}
 .meter i{display:block;height:100%;background:var(--accent)}
-main{grid-row:2;padding:16px;display:flex;flex-direction:column;gap:14px;width:100%;max-width:760px;margin:0 auto;padding-bottom:28px}
-.nav{grid-row:3;display:flex;background:var(--surface);border-top:1px solid var(--line);position:sticky;bottom:0;z-index:5}
-.nav button{flex:1;border:0;background:none;padding:10px 2px 12px;font-size:12.5px;color:var(--muted);cursor:pointer;border-top:2px solid transparent;position:relative}
-.nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--accent);font-weight:600}
-.badge{display:inline-block;min-width:17px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;line-height:17px;margin-left:4px}
+.ibtn{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:none;display:grid;place-items:center;color:var(--ink)}
+.ibtn:hover{background:var(--sunk)}
+.ibtn[aria-current="page"]{background:var(--sunk)}
+.pill{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:19px;border:1px solid var(--line);background:none;font-weight:600;font-family:var(--mono);font-size:13.5px;color:var(--ink)}
+.pill .live{width:8px;height:8px;border-radius:50%;background:var(--good)}
+main{display:flex;flex-direction:column;gap:16px;width:100%;max-width:860px;margin:0 auto;padding:18px 16px 96px}
+main[data-view="home"],main[data-view="track"],main[data-view="today"]{max-width:1280px}
+main[data-view="plan"]{max-width:980px}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;border-top:1px solid var(--line);background:var(--surface);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);padding-bottom:env(safe-area-inset-bottom)}
+.bnav button{flex:1;border:0;background:none;padding:8px 2px 9px;font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+.bnav button[aria-current="page"]{color:var(--ink);font-weight:600}
+.badge{display:inline-block;min-width:17px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;line-height:17px;font-weight:600;text-align:center}
+.bnav .badge{position:absolute;top:3px;left:calc(50% + 6px)}
 @media (min-width:900px){
-  .app{grid-template-columns:190px 1fr;grid-template-rows:auto 1fr}
-  .top{grid-column:1 / -1}
-  .nav{grid-row:2;grid-column:1;flex-direction:column;border-top:0;border-right:1px solid var(--line);position:sticky;top:45px;align-self:start;height:calc(100vh - 45px);padding-top:10px}
-  .nav button{flex:none;text-align:left;padding:10px 18px;font-size:14px;border-top:0;border-left:3px solid transparent}
-  .nav button[aria-current="page"]{border-left-color:var(--accent)}
-  main{grid-row:2;grid-column:2;padding:24px 28px 40px}
+  .rail{display:flex}
+  .tabs{display:flex}
+  .wkmeta{display:flex}
+  .bnav{display:none}
+  .app{padding-left:var(--rail)}
+  .top{padding:0 24px}
+  main{padding:26px 28px 48px}
 }
 
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
-.trk{border-left:4px solid var(--tc,var(--line))}
+/* ---- parts ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:9px;box-shadow:var(--shadow)}
+.trk{border-left:3px solid var(--tc,var(--line))}
 .card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-.chip{font-size:12px;font-weight:600;color:var(--tc,var(--muted));letter-spacing:.03em;text-transform:uppercase}
-.tag{font-size:11.5px;padding:1px 7px;border-radius:9px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
-.tag.sug{border-color:var(--accent);color:var(--accent)}
-.tag.warn{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
+.chip{font-size:11.5px;font-weight:600;color:var(--tc,var(--muted));letter-spacing:.06em;text-transform:uppercase}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:9px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.sug{border-color:transparent;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-weight:600}
+.tag.warn{background:var(--warn-bg);border-color:transparent;color:var(--warn);white-space:normal}
 .tag.good{color:var(--good);border-color:var(--good)}
 .meta{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
 .note{font-size:13.5px;color:var(--muted);border-left:2px solid var(--line);padding-left:10px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:14px}
+.btn{border:1px solid var(--line);background:var(--field);border-radius:11px;padding:8px 14px;font-size:14px;font-weight:500}
 .btn:hover{border-color:var(--muted)}
-.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
-.btn.sm{padding:4px 10px;font-size:13px}
-.btn.quiet{border-color:transparent;color:var(--muted);padding-left:6px;padding-right:6px}
-.btn.danger{color:#b3372f}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:var(--on-pri);font-weight:600}
+.btn.lg{padding:12px 22px;font-size:15px;border-radius:13px}
+.btn.sm{padding:5px 11px;font-size:13px;border-radius:9px}
+.btn.quiet{border-color:transparent;background:none;color:var(--muted);padding-left:6px;padding-right:6px}
+.btn.danger{color:var(--danger)}
 .bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--tc,var(--accent));max-width:100%}
-.banner{border-radius:var(--r);padding:12px 16px;background:var(--sunk);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.bar i{display:block;height:100%;background:var(--tc,var(--accent));max-width:100%;border-radius:3px}
+.banner{border-radius:var(--r);padding:13px 18px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
 .banner.warn{background:var(--warn-bg);border-color:transparent}
 .banner.good{border-color:var(--good)}
 .lede{color:var(--muted);font-size:14px}
-.running{border:2px solid var(--tc,var(--accent))}
-.clock{font:600 34px/1 var(--mono);font-variant-numeric:tabular-nums}
+.running{border:1.5px solid var(--tc,var(--accent))}
+.clock{font:600 38px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .steps{font-size:12.5px;color:var(--muted)}
-.sect{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px}
-.sect h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.sect{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:8px}
+.sect h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;align-items:stretch}
+.cols .row{margin-top:auto}
 form.inline{display:flex;gap:8px}
 form.inline input{flex:1;min-width:0}
-input[type=text],input[type=number],input[type=date],select,textarea{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 10px;width:100%}
+input[type=text],input[type=number],input[type=date],select,textarea{border:1px solid var(--line);background:var(--field);border-radius:11px;padding:9px 11px;width:100%}
+select option{background:var(--solid);color:var(--ink)}
 textarea{min-height:70px;resize:vertical}
 label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
 label.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-size:14px}
 label.check input{width:auto}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 
-.wkrow{display:grid;grid-template-columns:120px 1fr 92px;gap:10px;align-items:center;font-size:14px}
-.wkrow .bar{height:10px;border-radius:5px}
+/* ---- home dashboard ---- */
+.dash{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.dash>*{grid-column:span 12;min-width:0}
+.hero{padding:24px 26px;gap:12px;background:linear-gradient(130deg,color-mix(in srgb,var(--tc,var(--accent)) 24%,transparent),transparent 62%),var(--surface);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
+.eyebrow{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.hero h1{max-width:30ch}
+@media (max-width:700px){h1{font-size:23px}.hero{padding:20px}}
+.tcard{text-align:left;cursor:pointer;font:inherit;color:inherit}
+.tcard:hover{border-color:var(--tc)}
+.tname{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.tname svg{color:var(--tc)}
+.big{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.big small{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:4px}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-size:24px;font-weight:700;letter-spacing:-.025em}
+.stat span{font-size:12.5px;color:var(--muted)}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;max-width:380px}
+.heat i{display:block;aspect-ratio:1;border-radius:4px;background:var(--sunk)}
+.heat .l1{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.heat .l2{background:color-mix(in srgb,var(--accent) 52%,transparent)}
+.heat .l3{background:color-mix(in srgb,var(--accent) 76%,transparent)}
+.heat .l4{background:var(--accent)}
+.heat .fut{opacity:.35}
+.heat .now{box-shadow:0 0 0 1.5px var(--ink)}
+.arow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.arow:first-of-type{border-top:0}
+@media (min-width:700px){.dash>.tcard{grid-column:span 6}}
+@media (min-width:1100px){
+  .dash>.hero{grid-column:span 7}.dash>.wk{grid-column:span 5}
+  .dash>.tcard{grid-column:span 3}
+  .dash>.cons{grid-column:span 7}.dash>.attn{grid-column:span 5}
+}
+
+/* ---- week ---- */
+.wkrow{display:grid;grid-template-columns:128px 1fr 96px;gap:10px;align-items:center;font-size:14px}
+.wkrow .bar{height:8px;border-radius:4px}
 .wkrow .r{text-align:right;color:var(--muted)}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:92px}
 .day{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%;font-size:11.5px;color:var(--muted)}
-.day i{display:block;width:100%;max-width:34px;border-radius:4px 4px 0 0;background:var(--accent);min-height:2px}
-.day.today b{color:var(--ink)}
+.day i{display:block;width:100%;max-width:34px;border-radius:5px 5px 0 0;background:var(--accent);min-height:2px}
+.day.today b{color:var(--ink);font-weight:700}
 .day b{font-weight:500}
 .srow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
 .srow:first-child{border-top:0}
 
+/* ---- plan and queues ---- */
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips button{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:5px 12px;cursor:pointer;font-size:13.5px}
-.chips button[aria-pressed="true"]{background:var(--tc,var(--accent));border-color:var(--tc,var(--accent));color:#fff;font-weight:600}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chips button[aria-pressed="true"]{color:#10161b}}
+.chips button{border:1px solid var(--line);background:var(--field);border-radius:16px;padding:6px 13px;font-size:13.5px}
+.chips button[aria-pressed="true"]{background:var(--pri);border-color:var(--pri);color:var(--on-pri);font-weight:600}
 details.grp{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
-details.grp>summary{padding:11px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
+details.grp>summary{padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
 details.grp>summary span{color:var(--muted);font-weight:400;white-space:nowrap}
 details.item{border-top:1px solid var(--line)}
-details.item>summary{list-style:none;cursor:pointer;padding:9px 14px;display:grid;grid-template-columns:14px 1fr auto;gap:2px 8px;align-items:baseline}
+details.item>summary{list-style:none;cursor:pointer;padding:10px 16px;display:grid;grid-template-columns:14px 1fr auto;gap:2px 8px;align-items:baseline}
 details.item>summary::-webkit-details-marker{display:none}
 .dot{width:9px;height:9px;border-radius:50%;border:2px solid var(--tc);align-self:center}
 .st-done .dot{background:var(--tc)} .st-done .ttl{color:var(--muted);text-decoration:line-through}
 .st-later .ttl{color:var(--muted)} .st-later .dot{border-style:dotted}
 .item .sub{grid-column:2 / -1;color:var(--muted);font-size:12.5px;display:flex;gap:4px 10px;flex-wrap:wrap}
-.item .acts{padding:4px 14px 12px 36px;display:flex;flex-direction:column;gap:8px}
+.item .acts{padding:4px 16px 12px 38px;display:flex;flex-direction:column;gap:8px}
 .idea{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
 .idea:first-child{border-top:0}
 .prow{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;padding:9px 0;border-top:1px solid var(--line);align-items:start}
 .prow:first-child{border-top:0}
 .prow input[type=checkbox]{margin-top:4px;width:17px;height:17px}
-.prow input[type=text]{grid-column:2;font-size:13px;padding:5px 8px}
+.prow input[type=text]{grid-column:2;font-size:13px;padding:6px 9px}
 .done-t{color:var(--muted);text-decoration:line-through}
-dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px)}
-dialog::backdrop{background:rgba(10,15,20,.5)}
-dialog form{padding:18px;display:flex;flex-direction:column;gap:12px}
-#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw}
+dialog{border:1px solid var(--line);border-radius:18px;background:var(--solid);color:var(--ink);padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-shadow:0 30px 80px -30px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(10,12,16,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+dialog form{padding:20px;display:flex;flex-direction:column;gap:12px}
+dialog h2{font-size:20px}
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--pri);color:var(--on-pri);padding:9px 15px;border-radius:11px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:40;max-width:90vw}
 #toast.on{opacity:1}
-@media (prefers-reduced-motion: reduce){#toast{transition:none}}
+@media (prefers-reduced-motion: reduce){#toast,.rail,.rlbl{transition:none}}
 .empty{color:var(--muted);font-size:14px;padding:6px 0}
 hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="top"><div class="brand">UNITY</div><div class="topmeta" id="topmeta"></div></header>
-  <nav class="nav" id="nav" aria-label="Sections"></nav>
+  <aside class="rail" id="rail" aria-label="Home and tracks"></aside>
+  <header class="top"><button class="brand" data-act="view" data-v="home" aria-label="UNITY home"><i></i>UNITY</button><nav class="tabs" id="nav" aria-label="Views"></nav><div class="topmeta" id="topmeta"></div></header>
   <main id="main"></main>
+  <nav class="bnav" id="bnav" aria-label="Sections"></nav>
 </div>
 <dialog id="dlg"></dialog>
 <div id="toast" role="status"></div>
 <script>
 "use strict";
 const SEED = {"tracks":[{"id":"sw","name":"Software","short":"SW","target":20},{"id":"str","name":"Structural","short":"STR","target":10},{"id":"ai","name":"AI","short":"AI","target":4},{"id":"ent","name":"Entrepreneurship","short":"ENT","target":3},{"id":"rev","name":"Review","short":"REV","target":3,"recurring":true,"label":"Review block: flashcards, weekly review, spaced re-quiz"},{"id":"build","name":"Chama build","short":"BLD","target":0}],"items":[{"id":"FSE.C01.M01","tr":"sw","t":"Ubuntu dev environment & toolchains (uv, Node LTS, Docker, PostgreSQL, editor)","h":5.0,"g":"Stage 1 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":10},{"id":"FSE.C01.M02","tr":"sw","t":"Git & GitHub workflow (branches, PRs, reviews, commit signing, gh CLI)","h":3.5,"g":"Stage 1 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":20},{"id":"FSE.C01.M03","tr":"sw","t":"The learning system: AI modes, logs, Anki, explain-backs","h":1.5,"g":"Stage 1 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":30},{"id":"FSE.C02.M01","tr":"sw","t":"Core refresh: types, functions, collections, comprehensions","h":5.0,"g":"Stage 1 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":40},{"id":"FSE.C02.M02","tr":"sw","t":"Errors, pytest basics and uv project layout","h":2.5,"g":"Stage 1 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":50},{"id":"FSE.C02.M03","tr":"sw","t":"Text & data processing: CSV/PDF extraction, regex, Decimal, dates and time zones","h":3.5,"g":"Stage 1 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":60},{"id":"FSE.C11.M01","tr":"sw","t":"Complexity, arrays, strings, hash maps","h":7.0,"g":"Stage 1 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":70},{"id":"FSE.C11.M02","tr":"sw","t":"Stacks, queues, linked lists, recursion","h":7.0,"g":"Stage 1 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":80},{"id":"FSE.C11.M10","tr":"sw","t":"Rolling Mode 0 practice reps (spaced problem sets)","h":22.5,"g":"Stage 1 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":90},{"id":"FSE.C03.M01","tr":"sw","t":"Relational modelling, normalisation and SQL essentials","h":4.5,"g":"Stage 1 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":100},{"id":"FSE.C03.M02","tr":"sw","t":"Money handling and double-entry ledger design","h":5.0,"g":"Stage 1 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":110},{"id":"FSE.C03.M03","tr":"sw","t":"Reconciliation and import pipelines (idempotent imports, matching, audit trails)","h":4.5,"g":"Stage 1 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":120},{"id":"FSE.C04.M01","tr":"sw","t":"JavaScript essentials: values, closures, modules, async/await","h":2.5,"g":"Stage 1 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":130},{"id":"FSE.C04.M02","tr":"sw","t":"TypeScript essentials: types, unions, narrowing, generics basics, strict mode","h":3.25,"g":"Stage 1 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":140},{"id":"FSE.C04.M03","tr":"sw","t":"HTML, CSS layout, responsive design and accessibility essentials","h":4.25,"g":"Stage 1 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":150},{"id":"FSE.C05.M01","tr":"sw","t":"Django essentials: project structure, models/ORM, admin","h":3.5,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":160},{"id":"FSE.C05.M02","tr":"sw","t":"DRF: serializers, viewsets, authentication and permissions","h":4.25,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":170},{"id":"FSE.C05.M03","tr":"sw","t":"Background work: Django Tasks API with a database-backed worker; scheduling","h":2.25,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":180},{"id":"FSE.C05.M10","tr":"sw","t":"Django security settings and auth (allauth, sessions vs tokens, CSP)","h":3.5,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":190},{"id":"FSE.C05.M12","tr":"sw","t":"Server-rendered Django: templates, forms, messages, HTMX partials","h":3.5,"g":"Stage 1 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":200},{"id":"FSE.C08.M01","tr":"sw","t":"Test strategy and API tests (pytest, pytest-django, DRF)","h":2.5,"g":"Stage 1 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":210},{"id":"FSE.C12.M01","tr":"sw","t":"Modular monolith, DDD-lite and module contracts","h":3.5,"g":"Stage 1 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":220},{"id":"FSE.C12.M02","tr":"sw","t":"Multi-tenancy models and trade-offs (incl. Postgres row-level security)","h":3.0,"g":"Stage 1 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":230},{"id":"FSE.C06.M01","tr":"sw","t":"React core mental model","h":2.5,"g":"Stage 1 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":240},{"id":"FSE.C09.M01","tr":"sw","t":"Docker and Compose, twelve-factor config, HTTPS, first deploy and backups","h":4.25,"g":"Stage 1 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":250},{"id":"FSE.C09.M03","tr":"sw","t":"Backups, restore drills and production PostgreSQL","h":4.0,"g":"Stage 1 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":260},{"id":"FSE.C10.M01","tr":"sw","t":"Security foundations: OWASP Top 10 and secure defaults for API and mobile","h":2.5,"g":"Stage 1 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":270},{"id":"FSE.C10.M02","tr":"sw","t":"AuthN/AuthZ, RBAC, tenant isolation and audit logging","h":4.0,"g":"Stage 1 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":280},{"id":"FSE.C01.M05","tr":"sw","t":"Debugging & reading docs/errors across Python, Django and React Native","h":3.5,"g":"Stage 2 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":290},{"id":"FSE.C02.M04","tr":"sw","t":"Iterators, generators, decorators, context managers","h":6.0,"g":"Stage 2 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":300},{"id":"FSE.C02.M05","tr":"sw","t":"Typing in depth: generics, protocols, dataclasses, Pydantic","h":6.0,"g":"Stage 2 · C02 Python","c":1,"src":"FSE-C02a-Python.md","n":"","st":"open","o":310},{"id":"FSE.C11.M03","tr":"sw","t":"Sorting and searching","h":7.0,"g":"Stage 2 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":320},{"id":"FSE.C11.M04","tr":"sw","t":"Trees, binary search trees, heaps","h":7.0,"g":"Stage 2 · C11 Computer science foundations","c":1,"src":"FSE-C11a-CSFoundations.md","n":"","st":"open","o":330},{"id":"FSE.C03.M04","tr":"sw","t":"Indexes, query plans, transactions and isolation","h":5.0,"g":"Stage 2 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":340},{"id":"FSE.C04.M04","tr":"sw","t":"TypeScript depth: generics, utility and conditional types, Zod contracts","h":3.25,"g":"Stage 2 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":350},{"id":"FSE.C05.M04","tr":"sw","t":"API design: REST, OpenAPI, versioning, pagination, filtering, idempotency","h":3.5,"g":"Stage 2 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":360},{"id":"FSE.C05.M05","tr":"sw","t":"Files, object storage, PDF/reports, caching","h":3.5,"g":"Stage 2 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":370},{"id":"FSE.C05.M07","tr":"sw","t":"Multi-tenancy with django-tenants and module entitlements","h":3.0,"g":"Stage 2 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":380},{"id":"FSE.C08.M03","tr":"sw","t":"Code review, including AI-written pull requests; seeded-defect drills","h":3.5,"g":"Stage 2 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":390},{"id":"FSE.C08.M04","tr":"sw","t":"End-to-end web testing with Playwright","h":3.5,"g":"Stage 2 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":400},{"id":"FSE.C08.M05","tr":"sw","t":"Static analysis, typing as tests, and refactoring","h":3.0,"g":"Stage 2 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":410},{"id":"FSE.C12.M03","tr":"sw","t":"Integration patterns: webhooks, queues, retries, idempotency, outbox","h":4.0,"g":"Stage 2 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":420},{"id":"FSE.C12.M04","tr":"sw","t":"ADRs, event-driven basics, caching and scaling","h":3.5,"g":"Stage 2 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":430},{"id":"FSE.C06.M02","tr":"sw","t":"React for the web with Vite and TypeScript; routing","h":3.5,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":440},{"id":"FSE.C06.M03","tr":"sw","t":"Server state with TanStack Query; forms and validation with Zod","h":3.5,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":450},{"id":"FSE.C06.M04","tr":"sw","t":"Design systems, component libraries, i18n (English/Swahili), accessibility","h":3.25,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":460},{"id":"FSE.C06.M05","tr":"sw","t":"Frontend testing (Vitest, Testing Library) and performance (React Compiler)","h":3.5,"g":"Stage 2 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":470},{"id":"FSE.C09.M02","tr":"sw","t":"CI/CD with GitHub Actions; environments; migrations in pipelines","h":4.0,"g":"Stage 2 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":480},{"id":"FSE.C09.M04","tr":"sw","t":"Observability: logs, metrics, traces, error tracking","h":4.5,"g":"Stage 2 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":490},{"id":"FSE.C10.M03","tr":"sw","t":"Threat modelling (STRIDE-lite) and ASVS Level 1","h":3.5,"g":"Stage 2 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":500},{"id":"FSE.C10.M04","tr":"sw","t":"Supply chain, secrets, and agent/LLM risks","h":3.5,"g":"Stage 2 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":510},{"id":"FSE.C10.M05","tr":"sw","t":"Privacy engineering under the Kenya Data Protection Act","h":4.0,"g":"Stage 2 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":520},{"id":"FSE.C01.M04","tr":"sw","t":"Linux & CLI depth (shell scripting, processes, permissions, systemd, ssh)","h":4.5,"g":"Stage 3 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":530},{"id":"FSE.C01.M06","tr":"sw","t":"Networking tools for developers (DNS, TLS, curl, mtr, latency measurement)","h":2.5,"g":"Stage 3 · C01 Workbench","c":1,"src":"FSE-C01-Workbench.md","n":"","st":"open","o":540},{"id":"FSE.C02.M06","tr":"sw","t":"The object model and data model (dunder methods, descriptors, composition)","h":7.0,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":550},{"id":"FSE.C02.M07","tr":"sw","t":"Concurrency: threads, processes, asyncio; free-threading awareness","h":7.0,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":560},{"id":"FSE.C02.M08","tr":"sw","t":"Standard library tour and performance (profiling, complexity in Python)","h":5.5,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":570},{"id":"FSE.C02.M09","tr":"sw","t":"Packaging and tooling (pyproject, ruff, type checkers, pre-commit hooks)","h":3.5,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":580},{"id":"FSE.C02.M10","tr":"sw","t":"Data analysis and visualisation for products (pandas, Matplotlib); builds on STRUCTURES V01.M10 numerics","h":5.0,"g":"Stage 3 · C02 Python","c":0,"src":"","n":"","st":"open","o":590},{"id":"FSE.C11.M05","tr":"sw","t":"Graphs: BFS/DFS, shortest paths","h":8.0,"g":"Stage 3 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":600},{"id":"FSE.C11.M06","tr":"sw","t":"Dynamic programming (working depth)","h":7.0,"g":"Stage 3 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":610},{"id":"FSE.C03.M05","tr":"sw","t":"Advanced SQL: window functions, CTEs, reporting queries","h":5.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":620},{"id":"FSE.C03.M06","tr":"sw","t":"Migrations, schema evolution and data quality","h":4.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":630},{"id":"FSE.C03.M07","tr":"sw","t":"PostgreSQL operations (roles, backups, PITR, pooling, extensions incl. pgvector)","h":5.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":640},{"id":"FSE.C03.M08","tr":"sw","t":"SQLite on device and sync-friendly schemas","h":4.5,"g":"Stage 3 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":650},{"id":"FSE.C04.M05","tr":"sw","t":"JavaScript in depth: event loop, prototypes, iterators, performance","h":4.5,"g":"Stage 3 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":660},{"id":"FSE.C04.M06","tr":"sw","t":"HTTP and the browser: fetch, CORS, cookies, caching, security headers, CSP","h":4.5,"g":"Stage 3 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":670},{"id":"FSE.C04.M07","tr":"sw","t":"Tooling: Node, package managers, Vite, linters/formatters, monorepos","h":3.5,"g":"Stage 3 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":680},{"id":"FSE.C05.M06","tr":"sw","t":"Webhooks and payment callbacks (Daraja patterns)","h":4.5,"g":"Stage 3 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":690},{"id":"FSE.C05.M08","tr":"sw","t":"ORM depth: query optimisation, N+1, transactions, row locking","h":5.5,"g":"Stage 3 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":700},{"id":"FSE.C05.M09","tr":"sw","t":"FastAPI for AI and lightweight services","h":5.5,"g":"Stage 3 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":710},{"id":"FSE.C08.M02","tr":"sw","t":"Fixtures, factories and property-based tests (Hypothesis) for ledgers","h":3.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":720},{"id":"FSE.C08.M06","tr":"sw","t":"Contract and schema tests (OpenAPI)","h":3.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":730},{"id":"FSE.C08.M07","tr":"sw","t":"TDD practice (Mode 0 katas)","h":4.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":740},{"id":"FSE.C08.M08","tr":"sw","t":"Mobile testing and test-data management","h":3.5,"g":"Stage 3 · C08 Testing and code quality","c":0,"src":"","n":"","st":"open","o":750},{"id":"FSE.C12.M05","tr":"sw","t":"Offline-first and local-first: sync engines, CRDTs, conflict resolution","h":5.5,"g":"Stage 3 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":760},{"id":"FSE.C12.M06","tr":"sw","t":"ERP case studies: Frappe/ERPNext and others (comparative)","h":4.5,"g":"Stage 3 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":770},{"id":"FSE.C12.M07","tr":"sw","t":"The module factory pattern (templates, code generation, entitlements)","h":4.5,"g":"Stage 3 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":780},{"id":"FSE.C06.M06","tr":"sw","t":"Application architecture and client state management","h":4.5,"g":"Stage 3 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":790},{"id":"FSE.C06.M07","tr":"sw","t":"Dashboards and data visualisation for PMO reporting","h":4.5,"g":"Stage 3 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":800},{"id":"FSE.C06.M08","tr":"sw","t":"Auth flows in SPAs (sessions, CSRF, passkeys UX)","h":3.5,"g":"Stage 3 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":810},{"id":"FSE.C07.M01","tr":"sw","t":"Expo and React Native essentials: Expo Router, components, styling, dev builds","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":820},{"id":"FSE.C07.M02","tr":"sw","t":"Data fetching, forms and local persistence (expo-sqlite)","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":830},{"id":"FSE.C07.M03","tr":"sw","t":"Builds and distribution: EAS, Play Console tracks, OTA updates, developer verification","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":840},{"id":"FSE.C07.M04","tr":"sw","t":"Offline sync patterns and background tasks","h":5.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":850},{"id":"FSE.C07.M05","tr":"sw","t":"Notifications: push, SMS fallback, deep links","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":860},{"id":"FSE.C07.M06","tr":"sw","t":"Device APIs: camera, location, files, signatures","h":4.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":870},{"id":"FSE.C07.M07","tr":"sw","t":"Android realities: low-end devices, data costs, performance profiling","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":880},{"id":"FSE.C07.M09","tr":"sw","t":"Mobile testing (React Native Testing Library; E2E options)","h":3.5,"g":"Stage 3 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":890},{"id":"FSE.C09.M05","tr":"sw","t":"Uptime, incident response and runbooks","h":3.5,"g":"Stage 3 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":900},{"id":"FSE.C09.M06","tr":"sw","t":"Hosting in practice and cost control (FinOps)","h":4.5,"g":"Stage 3 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":910},{"id":"FSE.C09.M07","tr":"sw","t":"Server hardening and an introduction to infrastructure as code","h":4.5,"g":"Stage 3 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":920},{"id":"FSE.C10.M06","tr":"sw","t":"Payment-flow security and fraud patterns","h":3.5,"g":"Stage 3 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":930},{"id":"FSE.C10.M07","tr":"sw","t":"Mobile security and Google Play policy compliance","h":3.5,"g":"Stage 3 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":940},{"id":"FSE.C10.M09","tr":"sw","t":"Hands-on web security labs (PortSwigger Web Security Academy)","h":5.5,"g":"Stage 3 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":950},{"id":"FSE.C11.M07","tr":"sw","t":"How computers work: memory, processes, concurrency","h":7.0,"g":"Stage 4 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":960},{"id":"FSE.C04.M08","tr":"sw","t":"Web performance and accessibility testing","h":3.5,"g":"Stage 4 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":970},{"id":"FSE.C04.M09","tr":"sw","t":"CSS and UI depth for commerce sites (layout systems, SEO-friendly markup)","h":4.5,"g":"Stage 4 · C04 Web platform and TypeScript","c":0,"src":"","n":"","st":"open","o":980},{"id":"FSE.C05.M11","tr":"sw","t":"Django in depth: request lifecycle, middleware, signals, templates (HTMX awareness)","h":5.5,"g":"Stage 4 · C05 Backend: Django, DRF, FastAPI","c":0,"src":"","n":"","st":"open","o":990},{"id":"FSE.C12.M08","tr":"sw","t":"System design practice: estimates, failure modes, capacity","h":4.5,"g":"Stage 4 · C12 Architecture and system design","c":0,"src":"","n":"","st":"open","o":1000},{"id":"FSE.C06.M09","tr":"sw","t":"Commerce frontends: SEO, server rendering options, performance budgets","h":5.0,"g":"Stage 4 · C06 Frontend: React","c":0,"src":"","n":"","st":"open","o":1010},{"id":"FSE.C11.M08","tr":"sw","t":"Networks for engineers: TCP/IP, DNS, TLS","h":6.0,"g":"Stage 5 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":1020},{"id":"FSE.C11.M09","tr":"sw","t":"Operating systems for engineers","h":7.0,"g":"Stage 5 · C11 Computer science foundations","c":0,"src":"","n":"","st":"open","o":1030},{"id":"FSE.C03.M09","tr":"sw","t":"Analytics and time-series basics (PMO dashboards, farm sensors)","h":3.5,"g":"Stage 5 · C03 Data, SQL and ledgers","c":0,"src":"","n":"","st":"open","o":1040},{"id":"FSE.C09.M08","tr":"sw","t":"Scaling basics: load balancing, connection pooling, CDN","h":3.5,"g":"Stage 5 · C09 DevOps and operations","c":0,"src":"","n":"","st":"open","o":1050},{"id":"FSE.C07.M08","tr":"sw","t":"Native modules with the Expo Modules API and Kotlin","h":5.5,"g":"Stage 6 · C07 Mobile: React Native and Expo","c":0,"src":"","n":"","st":"open","o":1060},{"id":"FSE.C10.M08","tr":"sw","t":"Children's data, monitoring ethics and age-appropriate design","h":4.5,"g":"Stage 6 · C10 Security and privacy","c":0,"src":"","n":"","st":"open","o":1070},{"id":"STR.EBK.01","tr":"str","t":"Email EBK: next Engineering Conversion Programme intake, and my eligibility as a BTech holder","h":1,"g":"Registration route","c":1,"src":"","n":"Replaces the plan's Graduate Engineer application. Ask for: next intake date, entry requirements, fees, and whether earlier supervised work can count.","st":"open","o":1080},{"id":"STR.EBK.02","tr":"str","t":"Decide on KETRB registration as a Candidate Engineering Technologist","h":1.5,"g":"Registration route","c":1,"src":"","n":"A registration you can hold now, separate from the EBK route. Check the current requirements on the KETRB site before applying.","st":"open","o":1090},{"id":"STR.SETUP","tr":"str","t":"Week 1 setup and orientation (toolkit, diagnostic, EBK admin)","h":10,"g":"Setup","c":1,"src":"STR-V00-Navigator.md","n":"","st":"open","o":1100},{"id":"STR.V01.M01","tr":"str","t":"Units, vectors, free-body diagrams","h":6,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1110},{"id":"STR.V01.M02","tr":"str","t":"Equilibrium, supports, determinacy","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1120},{"id":"STR.V01.M03","tr":"str","t":"Trusses and frames: method of joints and sections","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1130},{"id":"STR.V01.M04","tr":"str","t":"Distributed loads, centroids, section properties","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1140},{"id":"STR.V01.M05","tr":"str","t":"Axial, shear and moment diagrams","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1150},{"id":"STR.V01.M06","tr":"str","t":"Stress, strain and material behaviour","h":6,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1160},{"id":"STR.V01.M07","tr":"str","t":"Bending and shear stress, combined stress, Mohr’s circle","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1170},{"id":"STR.V01.M08","tr":"str","t":"Torsion; beam deflections (Macaulay, moment-area)","h":8,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1180},{"id":"STR.V01.M09","tr":"str","t":"Buckling: Euler, effective length, imperfections","h":5,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1190},{"id":"STR.V01.M10","tr":"str","t":"Maths toolkit: linear algebra, calculus, numerical methods","h":5,"g":"V01 Mechanics and maths","c":1,"src":"STR-V01-Mechanics-Maths.md","n":"","st":"open","o":1200},{"id":"STR.V02.M01","tr":"str","t":"Determinacy, stability, idealisation, load paths","h":6,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1210},{"id":"STR.V02.M02","tr":"str","t":"Virtual work and energy methods","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1220},{"id":"STR.V02.M03","tr":"str","t":"Influence lines and moving loads","h":6,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1230},{"id":"STR.V02.M04","tr":"str","t":"Force (flexibility) method","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1240},{"id":"STR.V02.M05","tr":"str","t":"Slope-deflection","h":8,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1250},{"id":"STR.V02.M06","tr":"str","t":"Moment distribution, including sway","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1260},{"id":"STR.V02.M07","tr":"str","t":"Approximate methods: portal, cantilever, sub-frames","h":6,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1270},{"id":"STR.V02.M08","tr":"str","t":"Direct stiffness: trusses","h":8,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1280},{"id":"STR.V02.M09","tr":"str","t":"Direct stiffness: beams and plane frames (Python solver)","h":12,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1290},{"id":"STR.V02.M10","tr":"str","t":"Intro to FE; first software model and verification","h":10,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1300},{"id":"STR.V02.M11","tr":"str","t":"Arches, cables, space frames, plastic analysis intro","h":4,"g":"V02 Structural analysis","c":0,"src":"","n":"","st":"open","o":1310},{"id":"STR.V03.M01","tr":"str","t":"Design philosophies: permissible stress to limit states","h":6,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1320},{"id":"STR.V03.M02","tr":"str","t":"EN 1990 + Kenya NA, combinations; full BS 8110/5950 alternative","h":9,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1330},{"id":"STR.V03.M03","tr":"str","t":"Permanent and imposed actions: EN 1991-1-1 and BS 6399-1","h":5,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1340},{"id":"STR.V03.M04","tr":"str","t":"Wind I: EN 1991-1-4 + full BS 6399-2 alternative","h":10,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1350},{"id":"STR.V03.M05","tr":"str","t":"Wind II: canopies, monopitch roofs, free-standing panels","h":7,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1360},{"id":"STR.V03.M06","tr":"str","t":"Thermal, execution and accidental actions; robustness","h":5,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1370},{"id":"STR.V03.M07","tr":"str","t":"Load takedown of a building (Python + drawing)","h":7,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1380},{"id":"STR.V03.M08","tr":"str","t":"Phase 1 integration and G1 gate exam","h":5,"g":"V03 Actions, loads, design philosophy","c":0,"src":"","n":"","st":"open","o":1390},{"id":"STR.V15a","tr":"str","t":"Practice primer (EBK, supervision, ethics, stamps)","h":8,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1400},{"id":"STR.V04","tr":"str","t":"RC Design I (incl. 12 h BS 8110 alternatives)","h":132,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1410},{"id":"STR.V05","tr":"str","t":"Steel Design I (incl. MP-P2-1 canopy, BS 5950 alternatives)","h":125,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1420},{"id":"STR.V06","tr":"str","t":"Timber and Masonry (incl. BS 5628/5268 alternatives)","h":55,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1430},{"id":"STR.V07","tr":"str","t":"Geotechnics and Foundations I (incl. MP-P2-2 PV footing)","h":79,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1440},{"id":"STR.CAP-P2-1","tr":"str","t":"Capstone: RC frame, 4–6 storeys, Nairobi","h":68,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1450},{"id":"STR.CAP-P2-2","tr":"str","t":"Capstone: steel portal-frame shed","h":40,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1460},{"id":"STR.G2","tr":"str","t":"Gate G2 and mock interview","h":5,"g":"Phase 2 · Low and mid-rise buildings","c":0,"src":"","n":"","st":"open","o":1470},{"id":"STR.V08","tr":"str","t":"Advanced Concrete","h":96,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1480},{"id":"STR.V09","tr":"str","t":"Tall Building Systems (incl. seismic)","h":112,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1490},{"id":"STR.V10","tr":"str","t":"Deep Foundations and Basements","h":63,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1500},{"id":"STR.CAP-P3-1","tr":"str","t":"Capstone: 15–25 storey scheme design","h":72,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1510},{"id":"STR.G3","tr":"str","t":"Gate G3","h":5,"g":"Phase 3 · High-rise","c":0,"src":"","n":"","st":"open","o":1520},{"id":"STR.V11","tr":"str","t":"Energy Infrastructure Structures","h":120,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1530},{"id":"STR.CAP-P4-1","tr":"str","t":"Capstone: PV ground-mount system","h":35,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1540},{"id":"STR.CAP-P4-2","tr":"str","t":"Capstone: fuel/EV station canopy","h":38,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1550},{"id":"STR.G4","tr":"str","t":"Gate G4 and mock interview","h":5,"g":"Phase 4 · Energy and industrial infrastructure","c":0,"src":"","n":"","st":"open","o":1560},{"id":"STR.V12","tr":"str","t":"FEA and Nonlinear Analysis","h":80,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1570},{"id":"STR.V13","tr":"str","t":"Connections, Fatigue and Dynamics","h":82,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1580},{"id":"STR.V14","tr":"str","t":"Geotechnics in Depth","h":60,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1590},{"id":"STR.G5","tr":"str","t":"Gate G5","h":5,"g":"Phase 5 · Specialist depth","c":0,"src":"","n":"","st":"open","o":1600},{"id":"STR.V15b","tr":"str","t":"Professional Practice and EBK","h":32,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1610},{"id":"STR.V16","tr":"str","t":"Structural Software Engineering","h":70,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1620},{"id":"STR.V17","tr":"str","t":"Trends and Frontiers: full study","h":25,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1630},{"id":"STR.G6","tr":"str","t":"Gate G6: final review","h":10,"g":"Phase 6 · Practice, registration and tooling","c":0,"src":"","n":"","st":"open","o":1640},{"id":"AI.F01","tr":"ai","t":"How language models work: tokens, context windows, training vs inference","h":8,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1650},{"id":"AI.F02","tr":"ai","t":"The AI landscape and the vocabulary practitioners use","h":4,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1660},{"id":"AI.P01","tr":"ai","t":"Prompting: system prompts, few-shot examples, structured output","h":10,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1670},{"id":"AI.P02","tr":"ai","t":"Managing context, judging outputs and spotting hallucinations","h":6,"g":"1 · Literacy and power use","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1680},{"id":"FSE.C13.M07","tr":"ai","t":"LLM APIs: messages, structured output, tool use, cost and latency","h":4.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1690},{"id":"FSE.C13.M08","tr":"ai","t":"RAG and embeddings (pgvector, LanceDB)","h":5.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1700},{"id":"FSE.C13.M09","tr":"ai","t":"Local models with Ollama on constrained hardware","h":3.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1710},{"id":"FSE.C13.M10","tr":"ai","t":"Evals and safety for AI features (incl. child-safe AI)","h":4.5,"g":"2 · Building AI features","c":0,"src":"","n":"","st":"open","o":1720},{"id":"AI.A01","tr":"ai","t":"Agents: the agentic loop, tool use, memory and planning patterns","h":16,"g":"3 · Agents and systems","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1730},{"id":"FSE.C13.M05","tr":"ai","t":"MCP and tool ecosystems","h":3.0,"g":"3 · Agents and systems","c":0,"src":"","n":"","st":"open","o":1740},{"id":"AI.A02","tr":"ai","t":"Multi-agent patterns, observability and debugging","h":8,"g":"3 · Agents and systems","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1750},{"id":"AI.S01","tr":"ai","t":"AI systems engineering: evaluation design, tracing, prompt-injection defence, cost control","h":14,"g":"3 · Agents and systems","c":1,"src":"AI roadmap documents","n":"From your AI roadmaps. Hours are an estimate; adjust after the first session.","st":"open","o":1760},{"id":"AI.GATE","tr":"ai","t":"Gate: I have built and shipped at least two apps personally","h":0.5,"g":"4 · Directing agents to build","c":1,"src":"","n":"","st":"open","o":1770},{"id":"FSE.C13.M01","tr":"ai","t":"Spec-driven development and context files","h":2.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1780},{"id":"FSE.C13.M02","tr":"ai","t":"Coding agents in practice: setup, permissions, plan-implement-test-review","h":3.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1790},{"id":"FSE.C13.M06","tr":"ai","t":"Agent and supply-chain security essentials","h":2.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1800},{"id":"FSE.C13.M03","tr":"ai","t":"Spec-driven development at scale: task packets and acceptance criteria","h":3.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1810},{"id":"FSE.C13.M04","tr":"ai","t":"Verification discipline and honest productivity measurement","h":3.0,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1820},{"id":"FSE.C13.M11","tr":"ai","t":"AI features for Kenyan contexts (Swahili, low bandwidth, cost)","h":2.5,"g":"4 · Directing agents to build","c":0,"src":"","n":"","st":"open","o":1830},{"id":"ENT.01","tr":"ent","t":"Write the venture thesis: who pays, for what, and why you","h":2,"g":"1 · Find the customer","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1840},{"id":"FSE.C14.M06","tr":"ent","t":"Customer discovery and sales for technical founders","h":2.5,"g":"1 · Find the customer","c":0,"src":"","n":"","st":"open","o":1850},{"id":"ENT.02","tr":"ent","t":"Ten customer conversations, each written up the same day","h":10,"g":"1 · Find the customer","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1860},{"id":"FSE.C14.M05","tr":"ent","t":"Kenyan business and tax basics for software firms","h":3.5,"g":"2 · Set up the company","c":0,"src":"","n":"","st":"open","o":1870},{"id":"ENT.03","tr":"ent","t":"Choose the business structure and register it; tax PIN and bank account","h":6,"g":"2 · Set up the company","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1880},{"id":"ENT.04","tr":"ent","t":"Data protection: decide on ODPC registration and write the privacy basics","h":3,"g":"2 · Set up the company","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1890},{"id":"FSE.C14.M03","tr":"ent","t":"Pricing models, contracts and IP, open-source licensing","h":3.5,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1900},{"id":"FSE.C14.M02","tr":"ent","t":"Specs clients sign, estimation and change control","h":2.75,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1910},{"id":"FSE.C14.M01","tr":"ent","t":"Client onboarding, SLAs and support","h":2.75,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1920},{"id":"FSE.C14.M04","tr":"ent","t":"Running a consultancy; positioning and portfolio","h":3.5,"g":"3 · Sell and deliver","c":0,"src":"","n":"","st":"open","o":1930},{"id":"ENT.05","tr":"ent","t":"First paid engagement: signed scope, price and acceptance terms","h":6,"g":"3 · Sell and deliver","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1940},{"id":"ENT.06","tr":"ent","t":"Startup resume review: check the criteria on the Proof page and set the date","h":1,"g":"4 · Resume the startup","c":1,"src":"","n":"Draft item. Edit it to fit.","st":"open","o":1950},{"id":"BLD.P01.1","tr":"build","t":"Chama: second MVP increment (statement import and reconciliation)","h":0,"g":"P01 Chama app","c":1,"src":"CHAMA APP project","n":"","st":"open","o":1960},{"id":"BLD.P01.2","tr":"build","t":"Chama v1.0: release to the client (set the new date)","h":0,"g":"P01 Chama app","c":1,"src":"CHAMA APP project","n":"","st":"open","o":1970},{"id":"BLD.P01.3","tr":"build","t":"Chama v1.0.1: share-out recording","h":0,"g":"P01 Chama app","c":1,"src":"CHAMA APP project","n":"","st":"open","o":1980}],"proofs":[{"id":"PR.01","tr":"str","t":"EBK has answered in writing on the conversion programme and my eligibility","done":0,"ev":""},{"id":"PR.02","tr":"str","t":"Phase 1 gate passed: mechanics, analysis and a working stiffness solver","done":0,"ev":""},{"id":"PR.03","tr":"str","t":"Two self-set design projects documented from brief to drawings","done":0,"ev":""},{"id":"PR.04","tr":"str","t":"Attached to one live project under a registered engineer","done":0,"ev":""},{"id":"PR.05","tr":"sw","t":"Three apps built personally and deployed","done":0,"ev":""},{"id":"PR.06","tr":"sw","t":"A written architecture decision record for each app","done":0,"ev":""},{"id":"PR.07","tr":"sw","t":"Can explain every shipped component without notes","done":0,"ev":""},{"id":"PR.08","tr":"ai","t":"One AI feature shipped with an evaluation suite","done":0,"ev":""},{"id":"PR.09","tr":"ai","t":"One project built by directing agents from my own spec","done":0,"ev":""},{"id":"PR.10","tr":"ent","t":"Company registered","done":0,"ev":""},{"id":"PR.11","tr":"ent","t":"First paying customer","done":0,"ev":""}],"criteria":[{"id":"CR.01","t":"Software Stage 1 and Stage 2 queues finished","done":0},{"id":"CR.02","t":"Three apps built personally and deployed","done":0},{"id":"CR.03","t":"Chama v1.0 in the client's hands","done":0},{"id":"CR.04","t":"Company registered","done":0},{"id":"CR.05","t":"Ten customer conversations written up","done":0}]};
-const VERSION = "1.0";
+const VERSION = "1.1";
 
 /* ---------- helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -221,7 +305,7 @@ function fresh() {
     settings: { start, targets, ramp: [25, 32], pauseMin: 8 },
     items: SEED.items.map(x => ({ ...x, u: 0 })), sessions: [], ideas: [],
     proofs: SEED.proofs.map(x => ({ ...x, u: 0 })), criteria: SEED.criteria.map(x => ({ ...x, u: 0 })),
-    pause: null, pauses: [], timer: null, reviews: {}, view: "today", planTrack: "sw", lastExport: 0
+    pause: null, pauses: [], timer: null, reviews: {}, view: "home", planTrack: "sw", lastExport: 0
   };
 }
 
@@ -331,13 +415,43 @@ function itemOpts(tr) {
 }
 
 /* ---------- views ---------- */
+const ICON = {
+  home: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  sw: '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/>',
+  str: '<path d="M3 20h18M5 20V8M19 20V8M3 8h18M5 8l7-4 7 4M5 14h14"/>',
+  ai: '<path d="M11 3l1.9 5.6L18.5 10.5l-5.6 1.9L11 18l-1.9-5.6L3.5 10.5l5.6-1.9z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+  ent: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/>',
+  build: '<circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M15.5 14.7c3 .1 5.5 1.9 5.5 5.3"/>',
+  today: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/>',
+  week: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  plan: '<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+  ideas: '<path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0012 3z"/>',
+  proof: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 9.5"/>',
+  more: '<path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  theme: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none"/>'
+};
+const ico = (k, n = 20) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k] || ""}</svg>`;
+function applyTheme() { const t = S.settings.theme, r = document.documentElement; if (t === "light" || t === "dark") r.dataset.theme = t; else delete r.dataset.theme; }
 function renderNav() {
-  const parked = S.ideas.filter(i => i.st === "parked").length;
-  const tabs = [["today", "Today"], ["week", "Week"], ["plan", "Plan"], ["ideas", "Ideas"], ["proof", "Proof"], ["more", "More"]];
-  $("#nav").innerHTML = tabs.map(([id, n]) => `<button data-act="view" data-v="${id}"${S.view === id ? ' aria-current="page"' : ""}>${n}${id === "ideas" && parked ? `<span class="badge">${parked}</span>` : ""}</button>`).join("");
+  const parked = S.ideas.filter(i => i.st === "parked").length, cur = ' aria-current="page"';
   const wk = monday(todayIso()), st = weekStatus(wk);
   const goal = st.plan.goal, pct = goal ? Math.min(100, st.mins / (goal * 60) * 100) : 0;
-  $("#topmeta").innerHTML = `<span class="num">${hrs(st.mins)}${goal ? " / " + hnum(goal) : ""} h this week</span>${goal ? `<span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span>` : ""}`;
+  $("#rail").innerHTML = `<button class="ritem" data-act="view" data-v="home" aria-label="Home"${S.view === "home" ? cur : ""}><span class="rico">${ico("home")}</span><span class="rlbl">Home</span></button><div class="rsep"></div>` +
+    SEED.tracks.filter(t => !t.recurring).map(t => {
+      const r = st.rows.find(x => x.tr.id === t.id);
+      return `<button class="ritem" data-act="track" data-tr="${t.id}" style="--tc:var(--c-${t.id})" aria-label="${esc(t.name)}"${S.view === "track" && S.planTrack === t.id ? cur : ""}><span class="rico tc">${ico(t.id)}</span><span class="rlbl">${esc(t.name)}<small class="num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h this week</small></span></button>`;
+    }).join("");
+  const badge = parked ? `<span class="badge">${parked}</span>` : "";
+  $("#nav").innerHTML = [["today", "Today"], ["week", "Week"], ["plan", "Plan"], ["ideas", "Ideas"], ["proof", "Proof"]]
+    .map(([id, n]) => `<button data-act="view" data-v="${id}"${S.view === id ? cur : ""}>${ico(id, 17)}${n}${id === "ideas" ? badge : ""}</button>`).join("");
+  $("#topmeta").innerHTML = (S.timer ? `<button class="pill" data-act="view" data-v="today" aria-label="Session running, open Today"><i class="live"></i><span id="clock2">00:00</span></button>` : "") +
+    `<span class="wkmeta num">${hrs(st.mins)}${goal ? " / " + hnum(goal) : ""} h this week${goal ? `<span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span>` : ""}</span>
+    <button class="ibtn" data-act="quick-idea" aria-label="Park an idea" title="Park an idea">${ico("plus")}</button>
+    <button class="ibtn" data-act="theme" aria-label="Switch theme" title="Theme: ${esc(S.settings.theme || "auto")}">${ico("theme")}</button>
+    <button class="ibtn" data-act="view" data-v="more" aria-label="Settings and backup" title="Settings and backup"${S.view === "more" ? cur : ""}>${ico("more")}</button>`;
+  $("#bnav").innerHTML = [["home", "Home"], ["today", "Today"], ["week", "Week"], ["plan", "Plan"], ["ideas", "Ideas"], ["more", "More"]]
+    .map(([id, n]) => `<button data-act="view" data-v="${id}"${S.view === id || (id === "home" && S.view === "track") ? cur : ""}>${ico(id)}${n}${id === "ideas" ? badge : ""}</button>`).join("");
 }
 
 function lessonTag(i) {
@@ -395,7 +509,7 @@ function viewToday() {
     const ra = a.base > 0 ? a.mins / ((a.target || a.base) * 60) : 9, rb = b.base > 0 ? b.mins / ((b.target || b.base) * 60) : 9;
     return ra - rb || a.i - b.i;
   });
-  h.push(`<div class="sect"><h2>Next up</h2></div>`);
+  h.push(`<div class="sect"><h2>Next up</h2></div><div class="cols">`);
   let first = true;
   for (const r of rows) {
     const tr = r.tr, it = tr.recurring ? null : nextItem(tr.id);
@@ -418,7 +532,7 @@ function viewToday() {
         <button class="btn" data-act="item-done" data-it="${esc(it.id)}">Mark done</button>
         <button class="btn quiet" data-act="open-plan" data-tr="${tr.id}">See queue</button></div></article>`);
   }
-  h.push(`<div class="sect"><h2>Caught an idea?</h2></div>
+  h.push(`</div><div class="sect"><h2>Caught an idea?</h2></div>
     <form class="inline" data-form="capture"><input type="text" name="text" id="cap-today" placeholder="Park it here in one line, then get back to the session" required maxlength="300" aria-label="Park an idea"><button class="btn" type="submit">Park</button></form>
     <div class="row"><button class="btn quiet" data-act="off-plan">Work on something not on the plan</button><button class="btn quiet" data-act="past">Log a past session</button></div>`);
   return h.join("");
@@ -428,7 +542,7 @@ function viewWeek() {
   const t = todayIso(), wk = monday(t), st = weekStatus(wk), ws = weekSessions(wk), h = [];
   h.push(`<div><h2>Week of ${fmtDate(wk, { day: "numeric", month: "long" })}</h2><p class="lede num">${hrs(st.mins)} h logged${st.plan.goal ? ` of ${hnum(st.plan.goal)} h` : ""}${st.plan.mode === "pause" ? " (engagement minimum)" : st.plan.mode === "ramp" ? " (ramp week)" : st.plan.mode === "warmup" ? ". Warm-up, no target yet" : ""}</p></div>`);
   h.push(`<div class="card">` + st.rows.filter(r => r.base > 0 || r.mins > 0).map(r => {
-    const pct = r.target > 0 ? Math.min(100, r.mins / (r.target * 60) * 100) : (r.mins ? 100 : 0);
+    const pct = Math.min(100, r.mins / ((r.target || r.base || 1) * 60) * 100);
     return `<div class="wkrow" style="--tc:var(--c-${r.tr.id})"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${pct}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`;
   }).join("") + `</div>`);
   const dm = []; let mx = 60;
@@ -453,18 +567,78 @@ function viewWeek() {
   return h.join("");
 }
 
-function viewPlan() {
-  const trId = S.planTrack || "sw", tr = track(trId), L = logged(), h = [];
-  const all = S.items.filter(i => i.tr === trId && i.st !== "removed").sort((a, b) => a.o - b.o);
-  const open = all.filter(i => i.st === "open"), done = all.filter(i => i.st === "done");
-  const remain = open.reduce((a, i) => a + Math.max(0, i.h - (L[i.id] || 0) / 60), 0), wkT = S.settings.targets[trId] || 0;
-  h.push(`<div><h2>Plan</h2><p class="lede">Each track is a queue. Work the top item; move things when the order is wrong.</p></div>`);
-  h.push(`<div class="chips">` + SEED.tracks.filter(t => !t.recurring).map(t => `<button data-act="plan-track" data-tr="${t.id}" style="--tc:var(--c-${t.id})" aria-pressed="${t.id === trId}">${esc(t.name)}</button>`).join("") + `</div>`);
-  h.push(`<div class="card trk" style="--tc:var(--c-${trId})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="meta num">${done.length} of ${all.length} items done</span></div>
-    <div class="meta num">${remain > 0 ? `${hnum(remain)} h of planned work left${wkT > 0 ? `, about ${Math.ceil(remain / wkT)} weeks at ${hnum(wkT)} h a week` : ""}` : "No planned hours left in this queue"}</div>
-    ${open.length ? `<div class="note">Top of the queue: ${open.slice(0, 3).map(i => esc(i.t)).join(" → ")}</div>` : ""}
-    <div class="row"><button class="btn sm" data-act="add-item">Add an item</button><label class="check" style="font-size:13px"><input type="checkbox" data-chg="show-done"${UI.showDone ? " checked" : ""}> Show finished items</label></div></div>`);
-  const groups = []; const gi = {};
+function trackStats(trId) {
+  const L = logged(), all = S.items.filter(i => i.tr === trId && i.st !== "removed").sort((a, b) => a.o - b.o);
+  const done = all.filter(i => i.st === "done"), open = all.filter(i => i.st === "open");
+  const total = all.reduce((a, i) => a + i.h, 0), aside = all.filter(i => i.st === "later").reduce((a, i) => a + i.h, 0);
+  const remain = open.reduce((a, i) => a + Math.max(0, i.h - (L[i.id] || 0) / 60), 0);
+  const mins = live().filter(x => x.tr === trId).reduce((a, x) => a + x.m, 0), wkT = S.settings.targets[trId] || 0;
+  const weeks = wkT > 0 && remain > 0 ? Math.ceil(remain / wkT) : 0;
+  const finish = weeks ? parse(addDays(todayIso(), weeks * 7)).toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "";
+  const pct = total > 0 ? Math.max(0, Math.min(100, (total - remain - aside) / total * 100)) : 0;
+  return { all, done, open, total, remain, mins, wkT, weeks, finish, pct };
+}
+function suggestion() {
+  const st = weekStatus(monday(todayIso()));
+  const rows = st.rows.filter(r => r.base > 0).sort((a, b) => a.mins / ((a.target || a.base) * 60) - b.mins / ((b.target || b.base) * 60) || a.i - b.i);
+  for (const r of rows) { const it = r.tr.recurring ? null : nextItem(r.tr.id); if (r.tr.recurring || it) return { r, it }; }
+  return null;
+}
+function consistency() {
+  const by = {}, t = todayIso(); for (const x of live()) by[x.d] = (by[x.d] || 0) + x.m;
+  let run = 0, d = by[t] ? t : addDays(t, -1); while (by[d]) { run++; d = addDays(d, -1); }
+  let d28 = 0; for (let i = 0; i < 28; i++) if (by[addDays(t, -i)]) d28++;
+  const w0 = addDays(monday(t), -77), cells = [];
+  for (let k = 0; k < 84; k++) { const dd = addDays(w0, k), m = by[dd] || 0; cells.push({ d: dd, m, lv: m === 0 ? 0 : m < 60 ? 1 : m < 180 ? 2 : m < 300 ? 3 : 4, fut: dd > t }); }
+  return { run, d28, cells };
+}
+function attention() {
+  const a = [], t = todayIso(), parked = S.ideas.filter(i => i.st === "parked").length;
+  if (S.pause && S.pause.until < t) a.push({ t: "Your engagement has ended. Resume the full plan.", v: "today", b: "Open" });
+  if (parked) a.push({ t: `${parked} parked idea${parked > 1 ? "s" : ""} waiting for a decision`, v: "ideas", b: "Decide" });
+  for (const tr of SEED.tracks) { if (tr.recurring) continue; const it = nextItem(tr.id); if (it && !it.c) a.push({ t: `${tr.name}: the lesson for “${it.t}” is not written yet. Ask Claude for it.`, tr: tr.id, b: "Open" }); }
+  if ((parse(t).getDay() + 6) % 7 >= 5 && !S.reviews[monday(t)]) a.push({ t: "This week is not closed yet", v: "week", b: "Close it" });
+  return a;
+}
+function viewHome() {
+  const t = todayIso(), st = weekStatus(monday(t)), L = logged(), h = [], tm = S.timer, sg = suggestion();
+  if (tm) {
+    const it = tm.it && item(tm.it);
+    h.push(`<article class="card hero" style="--tc:var(--c-${tm.tr})"><span class="eyebrow">In session · ${esc(track(tm.tr).name)}</span><h1>${esc(it ? it.t : tm.label || track(tm.tr).label || "")}</h1><div class="clock" id="clock">00:00</div>
+      <div class="steps">Recall the last session (5 min) · Learn · Do · Test yourself · Log</div><div class="row"><button class="btn pri lg" data-act="stop">Stop and log</button></div></article>`);
+  } else if (sg) {
+    const tr = sg.r.tr, it = sg.it, lm = it ? (L[it.id] || 0) : 0;
+    h.push(`<article class="card hero" style="--tc:var(--c-${tr.id})"><span class="eyebrow">${fmtDate(t, { weekday: "long", day: "numeric", month: "long" })} · next up in ${esc(tr.name)}</span>
+      <h1>${esc(it ? it.t : tr.label)}</h1>
+      ${it ? `<div class="meta"><code>${esc(it.id)}</code>${it.h > 0 ? `<span class="num">${hrs(lm)} of ${hnum(it.h)} h</span>` : ""}${lessonTag(it)}</div>${it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : ""}` : ""}
+      <div class="row"><button class="btn pri lg" data-act="start" data-tr="${tr.id}"${it ? ` data-it="${esc(it.id)}"` : ""}>Start session</button><button class="btn lg" data-act="view" data-v="today">All of today</button></div></article>`);
+  } else h.push(`<article class="card hero"><span class="eyebrow">${fmtDate(t)}</span><h1>Every queue is finished.</h1></article>`);
+  const goal = st.plan.goal, mode = st.plan.mode;
+  h.push(`<article class="card wk"><div class="card-h"><span class="eyebrow">This week</span><span class="meta">${mode === "pause" ? "Engagement minimum" : mode === "warmup" ? `Warm-up until ${fmtDate(S.settings.start)}` : mode === "ramp" ? "Ramp week" : "Full week"}</span></div>
+    <div class="big num">${hrs(st.mins)}<small>${goal ? `of ${hnum(goal)} h` : "h logged"}</small></div>` +
+    st.rows.filter(r => r.base > 0 || r.mins > 0).map(r => `<div class="wkrow" style="--tc:var(--c-${r.tr.id})"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${Math.min(100, r.mins / ((r.target || r.base || 1) * 60) * 100)}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`).join("") + `</article>`);
+  for (const tr of SEED.tracks.filter(x => !x.recurring && x.target > 0)) {
+    const s = trackStats(tr.id), nx = s.open[0];
+    h.push(`<button class="card trk tcard" data-act="track" data-tr="${tr.id}" style="--tc:var(--c-${tr.id})"><span class="tname">${ico(tr.id, 18)}${esc(tr.name)}</span>
+      <div class="big num">${Math.round(s.pct)}<small>% done</small></div><div class="bar"><i style="width:${s.pct}%"></i></div>
+      <div class="meta num">${s.done.length} of ${s.all.length} items · ${hnum(s.remain)} h left</div>
+      <div class="meta num">${s.weeks ? `Finish about ${s.finish} at ${hnum(s.wkT)} h a week` : (s.remain > 0 ? "No weekly hours set" : "Queue finished")}</div>
+      ${nx ? `<div class="note clamp">Next: ${esc(nx.t)}</div>` : ""}</button>`);
+  }
+  const c = consistency(), totalM = live().reduce((a, x) => a + x.m, 0);
+  h.push(`<article class="card cons"><div class="card-h"><span class="eyebrow">Consistency</span><span class="meta num">${c.d28} of the last 28 days</span></div>
+    <div class="row" style="gap:28px;align-items:flex-end"><div><div class="big num">${c.run}<small>day${c.run === 1 ? "" : "s"} in a row</small></div><div class="meta num" style="margin-top:6px">${hrs(totalM)} h in ${live().length} session${live().length === 1 ? "" : "s"} so far</div></div>
+    <div class="heat" style="flex:1;min-width:220px" role="img" aria-label="Hours studied per day over the last twelve weeks">${c.cells.map(x => `<i class="l${x.lv}${x.fut ? " fut" : ""}${x.d === t ? " now" : ""}" title="${fmtDate(x.d)}: ${hrs(x.m)} h"></i>`).join("")}</div></div>
+    <div class="meta">One square per day, Monday at the top, this week on the right. Darker means more hours.</div></article>`);
+  const at = attention(), ng = nudges();
+  h.push(`<article class="card attn"><span class="eyebrow">Needs attention</span>` + (at.length || ng.length ?
+    at.map(a => `<div class="arow"><span>${esc(a.t)}</span><button class="btn sm" data-act="${a.tr ? "track" : "view"}" ${a.tr ? `data-tr="${a.tr}"` : `data-v="${a.v}"`}>${a.b}</button></div>`).join("") + ng.map(n => `<div class="arow"><span>${n}</span><span></span></div>`).join("") :
+    `<div class="empty">Nothing needs you right now.</div>`) + `</article>`);
+  return `<div class="dash">${h.join("")}</div>`;
+}
+function queueHtml(trId, L) {
+  const all = S.items.filter(i => i.tr === trId && i.st !== "removed").sort((a, b) => a.o - b.o), open = all.filter(i => i.st === "open"), h = [];
+  const groups = [], gi = {};
   for (const i of all) { if (!(i.g in gi)) { gi[i.g] = groups.length; groups.push({ g: i.g, items: [] }); } groups[gi[i.g]].items.push(i); }
   const nextId = open[0] && open[0].id, nextG = open[0] && open[0].g;
   if (nextG && !UI.touchedG) UI.openG.add(trId + "|" + nextG);
@@ -472,9 +646,38 @@ function viewPlan() {
     const key = trId + "|" + g.g, d = g.items.filter(i => i.st === "done").length, hh = g.items.reduce((a, i) => a + i.h, 0);
     const vis = g.items.filter(i => UI.showDone || i.st !== "done");
     h.push(`<details class="grp" data-g="${esc(key)}"${UI.openG.has(key) ? " open" : ""} style="--tc:var(--c-${trId})"><summary>${esc(g.g)}<span class="num">${d}/${g.items.length} · ${hnum(hh)} h</span></summary>` +
-      (UI.openG.has(key) ? (vis.length ? vis.map(i => itemRow(i, L, i.id === nextId)).join("") : `<div class="empty" style="padding:8px 14px">All finished here.</div>`) : "") + `</details>`);
+      (UI.openG.has(key) ? (vis.length ? vis.map(i => itemRow(i, L, i.id === nextId)).join("") : `<div class="empty" style="padding:8px 16px">All finished here.</div>`) : "") + `</details>`);
   }
   return h.join("");
+}
+const queueTools = () => `<div class="row"><button class="btn sm" data-act="add-item">Add an item</button><label class="check" style="font-size:13px"><input type="checkbox" data-chg="show-done"${UI.showDone ? " checked" : ""}> Show finished items</label></div>`;
+function viewTrack() {
+  const trId = S.planTrack || "sw", tr = track(trId), s = trackStats(trId), L = logged(), h = [], nx = s.open[0];
+  const wr = weekStatus(monday(todayIso())).rows.find(r => r.tr.id === trId), ps = S.proofs.filter(p => p.tr === trId && !p.del);
+  h.push(`<div class="row" style="justify-content:space-between;--tc:var(--c-${trId})"><div class="row" style="gap:14px"><span class="rico tc" style="background:var(--sunk)">${ico(trId, 22)}</span><div><h2>${esc(tr.name)}</h2><p class="lede num">${s.done.length} of ${s.all.length} items done · ${Math.round(s.pct)}% of planned hours</p></div></div>${queueTools()}</div>`);
+  h.push(`<div class="stats"><div class="stat"><b class="num">${hrs(wr.mins)}${wr.target > 0 ? ` / ${hnum(wr.target)}` : ""}</b><span>hours this week</span></div>
+    <div class="stat"><b class="num">${hrs(s.mins)}</b><span>hours logged in total</span></div>
+    <div class="stat"><b class="num">${hnum(s.remain)}</b><span>planned hours left</span></div>
+    <div class="stat"><b class="num">${s.weeks ? esc(s.finish) : "—"}</b><span>${s.weeks ? `finish at ${hnum(s.wkT)} h a week` : (s.remain > 0 ? "no weekly hours set" : "queue finished")}</span></div></div>`);
+  if (nx) {
+    const lm = L[nx.id] || 0;
+    h.push(`<article class="card trk" style="--tc:var(--c-${trId})"><div class="card-h"><span class="chip">Next up</span><span class="meta num">${nx.h > 0 ? `${hrs(lm)} of ${hnum(nx.h)} h` : ""}</span></div><h3>${esc(nx.t)}</h3>
+      <div class="meta"><code>${esc(nx.id)}</code>${lessonTag(nx)}</div>${nx.h > 0 ? `<div class="bar"><i style="width:${Math.min(100, lm / (nx.h * 60) * 100)}%"></i></div>` : ""}
+      ${nx.next ? `<div class="note">Pick up at: ${esc(nx.next)}</div>` : (nx.n ? `<div class="note">${esc(nx.n)}</div>` : "")}
+      <div class="row"><button class="btn pri" data-act="start" data-tr="${trId}" data-it="${esc(nx.id)}">Start session</button><button class="btn" data-act="item-done" data-it="${esc(nx.id)}">Mark done</button></div></article>`);
+  }
+  h.push(`<div class="sect"><h2>Queue</h2></div>` + queueHtml(trId, L));
+  if (ps.length) h.push(`<div class="sect"><h2>Proof for this track</h2><button class="btn sm" data-act="view" data-v="proof">Open Proof</button></div><div class="card">` + ps.map(p => `<div class="arow"><span class="${p.done ? "done-t" : ""}">${esc(p.t)}</span><span class="tag${p.done ? " good" : ""}">${p.done ? "Done" : "Open"}</span></div>`).join("") + `</div>`);
+  return h.join("");
+}
+function viewPlan() {
+  const trId = S.planTrack || "sw", tr = track(trId), s = trackStats(trId), L = logged(), h = [];
+  h.push(`<div><h2>Plan</h2><p class="lede">Each track is a queue. Work the top item; move things when the order is wrong.</p></div>`);
+  h.push(`<div class="chips">` + SEED.tracks.filter(t => !t.recurring).map(t => `<button data-act="plan-track" data-tr="${t.id}" aria-pressed="${t.id === trId}">${esc(t.name)}</button>`).join("") + `</div>`);
+  h.push(`<div class="card trk" style="--tc:var(--c-${trId})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="meta num">${s.done.length} of ${s.all.length} items done</span></div>
+    <div class="meta num">${s.remain > 0 ? `${hnum(s.remain)} h of planned work left${s.weeks ? `, about ${s.weeks} weeks at ${hnum(s.wkT)} h a week` : ""}` : "No planned hours left in this queue"}</div>
+    ${s.open.length ? `<div class="note">Top of the queue: ${s.open.slice(0, 3).map(i => esc(i.t)).join(" → ")}</div>` : ""}${queueTools()}</div>`);
+  return h.join("") + queueHtml(trId, L);
 }
 function itemRow(i, L, isNext) {
   const lm = L[i.id] || 0, openI = UI.openI === i.id;
@@ -520,7 +723,7 @@ function viewProof() {
 
 function viewMore() {
   const h = [], p = S.pause, t = todayIso(), act = pauseOn(t), tg = S.settings.targets, total = Object.values(tg).reduce((a, b) => a + b, 0);
-  h.push(`<div><h2>More</h2></div>`);
+  h.push(`<div class="row" style="justify-content:space-between"><h2>Settings and backup</h2><button class="btn sm" data-act="view" data-v="proof">Open Proof</button></div>`);
   h.push(`<div class="sect"><h2>Pause for an engagement</h2></div><div class="card">` + (p && p.until >= t ?
     `<div><b>${act ? "Paused" : "Pause scheduled"}: ${esc(p.reason || "engagement")}</b></div><div class="meta">${fmtDate(p.from)} to ${fmtDate(p.until)} · minimum ${hnum(p.min)} h a week</div><div class="row"><button class="btn sm" data-act="end-pause">End the pause</button></div>` :
     `<p class="lede">When paid work or life takes over, pause. The weekly target drops to a minimum and every queue stays where it is.</p>
@@ -543,19 +746,21 @@ function viewMore() {
   return h.join("");
 }
 
-const VIEWS = { today: viewToday, week: viewWeek, plan: viewPlan, ideas: viewIdeas, proof: viewProof, more: viewMore };
+const VIEWS = { home: viewHome, track: viewTrack, today: viewToday, week: viewWeek, plan: viewPlan, ideas: viewIdeas, proof: viewProof, more: viewMore };
 function render() {
-  if (!VIEWS[S.view]) S.view = "today";
+  if (!VIEWS[S.view]) S.view = "home";
+  applyTheme();
   renderNav();
+  $("#main").dataset.view = S.view;
   $("#main").innerHTML = VIEWS[S.view]();
   tick();
 }
 function tick() {
-  const c = $("#clock");
+  const c = $("#clock"), c2 = $("#clock2");
   if (S && S.timer) {
     const s = Math.floor((Date.now() - S.timer.start) / 1000), hh = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60;
     const txt = (hh ? hh + ":" : "") + pad(mm) + ":" + pad(ss);
-    if (c) c.textContent = txt; document.title = "● " + txt + " UNITY";
+    if (c) c.textContent = txt; if (c2) c2.textContent = txt; document.title = "● " + txt + " UNITY";
   } else if (document.title !== "UNITY") document.title = "UNITY";
 }
 setInterval(tick, 1000);
@@ -636,7 +841,7 @@ function ideaDecide(id, kind) {
   UI.giveOpts = giveOpts;
 }
 const ACT = {
-  view(el) { S.view = el.dataset.v; save(); render(); window.scrollTo(0, 0); },
+  view(el) { if (el.closest("#rail")) $("#rail").classList.add("shut"); S.view = el.dataset.v; save(); render(); window.scrollTo(0, 0); },
   "dlg-close"() { closeDlg(); },
   start(el) { const tr = el.dataset.tr, it = el.dataset.it; startTimer(tr, it, it ? "" : track(tr).label, false); },
   stop() { closeSessionDlg(); },
@@ -652,7 +857,13 @@ const ACT = {
         else { closeDlg(); startTimer(d.tr, null, d.label.trim(), true); return false; }
       });
   },
-  "open-plan"(el) { S.planTrack = el.dataset.tr; S.view = "plan"; UI.touchedG = false; save(); render(); window.scrollTo(0, 0); },
+  "open-plan"(el) { ACT.track(el); },
+  track(el) { if (el.closest("#rail")) $("#rail").classList.add("shut"); S.planTrack = el.dataset.tr; S.view = "track"; UI.touchedG = false; UI.openI = null; save(); render(); window.scrollTo(0, 0); },
+  theme() { const o = ["auto", "light", "dark"]; S.settings.theme = o[(o.indexOf(S.settings.theme || "auto") + 1) % 3]; save(); render(); toast("Theme: " + S.settings.theme); },
+  "quick-idea"() {
+    openDlg(`<h2>Park an idea</h2><label>In one line<input type="text" name="text" id="qi-t" required maxlength="300" autofocus></label>
+      <div class="row"><button class="btn pri" type="submit">Park</button><button class="btn" type="button" data-act="dlg-close">Cancel</button></div>`, d => { FORMS.capture(d); });
+  },
   "plan-track"(el) { S.planTrack = el.dataset.tr; UI.touchedG = false; UI.openI = null; save(); render(); },
   "add-item"() { editItemDlg(null); },
   "item-edit"(el) { editItemDlg(item(el.dataset.it)); },
@@ -705,6 +916,7 @@ document.addEventListener("toggle", e => {
   else if (el.matches("details.item")) { const id = el.dataset.i; if (el.open && UI.openI !== id) { UI.openI = id; render(); } else if (!el.open && UI.openI === id) { UI.openI = null; render(); } }
 }, true);
 $("#dlg").addEventListener("cancel", () => { dlgSubmit = null; });
+$("#rail").addEventListener("mouseleave", () => $("#rail").classList.remove("shut"));
 document.addEventListener("visibilitychange", () => { if (document.hidden && S) { clearTimeout(saveT); DB.put(S); } else if (S) render(); });
 
 /* ---------- boot ---------- */
