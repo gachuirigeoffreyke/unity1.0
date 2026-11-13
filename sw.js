@@ -1,5 +1,5 @@
 /* UNITY offline cache. Network first, so updates arrive when online; cache when offline. */
-const CACHE = "unity-v11";
+const CACHE = "unity-v12";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "inter.woff2",
   "lib/marked.min.js", "lib/katex.min.js",
   "volumes/FSE-C01-Workbench.md", "volumes/FSE-C02a-Python.md", "volumes/FSE-C11a-CSFoundations.md", "volumes/STR-V01-Mechanics-Maths.md"];
