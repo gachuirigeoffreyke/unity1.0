@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNITY</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17354d">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  /* Layout idea: a site daybook. One column of today's work orders, each with its track colour on the left edge. */
+  --bg:#f3f5f3; --surface:#ffffff; --sunk:#e9ece9; --ink:#1a2127; --muted:#5b6670; --line:#d6dbd7;
+  --accent:#1c5a86; --on-accent:#ffffff; --good:#237a57; --warn:#9a6312; --warn-bg:#fbf1dc;
+  --c-sw:#2a67ad; --c-str:#a4572a; --c-ai:#7448b0; --c-ent:#22805d; --c-rev:#5f6b76; --c-build:#b03f66;
+  --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+  --mono:ui-monospace,"SF Mono","Ubuntu Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#12171b; --surface:#1b2227; --sunk:#151b20; --ink:#e6eaed; --muted:#98a4ad; --line:#2b343b;
+    --accent:#6eb1e0; --on-accent:#0d1a24; --good:#5cc497; --warn:#e2b25c; --warn-bg:#33290f;
+    --c-sw:#6aa6e6; --c-str:#dd9163; --c-ai:#b08ee6; --c-ent:#5cc497; --c-rev:#9aa6b0; --c-build:#e585a6;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#12171b; --surface:#1b2227; --sunk:#151b20; --ink:#e6eaed; --muted:#98a4ad; --line:#2b343b;
+  --accent:#6eb1e0; --on-accent:#0d1a24; --good:#5cc497; --warn:#e2b25c; --warn-bg:#33290f;
+  --c-sw:#6aa6e6; --c-str:#dd9163; --c-ai:#b08ee6; --c-ent:#5cc497; --c-rev:#9aa6b0; --c-build:#e585a6;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--font);-webkit-text-size-adjust:100%}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.25}
+h2{font-size:20px} h3{font-size:16px;font-weight:600}
+p{margin:0}
+code,.mono{font-family:var(--mono);font-size:12.5px}
+.num{font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{min-height:100%;display:grid;grid-template-rows:auto 1fr auto}
+.top{display:flex;align-items:center;gap:14px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand{font-weight:700;letter-spacing:.14em;font-size:14px}
+.topmeta{flex:1;min-width:0;display:flex;align-items:center;gap:10px;justify-content:flex-end;color:var(--muted);font-size:13px}
+.meter{width:110px;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;flex:none}
+.meter i{display:block;height:100%;background:var(--accent)}
+main{grid-row:2;padding:16px;display:flex;flex-direction:column;gap:14px;width:100%;max-width:760px;margin:0 auto;padding-bottom:28px}
+.nav{grid-row:3;display:flex;background:var(--surface);border-top:1px solid var(--line);position:sticky;bottom:0;z-index:5}
+.nav button{flex:1;border:0;background:none;padding:10px 2px 12px;font-size:12.5px;color:var(--muted);cursor:pointer;border-top:2px solid transparent;position:relative}
+.nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--accent);font-weight:600}
+.badge{display:inline-block;min-width:17px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;line-height:17px;margin-left:4px}
+@media (min-width:900px){
+  .app{grid-template-columns:190px 1fr;grid-template-rows:auto 1fr}
+  .top{grid-column:1 / -1}
+  .nav{grid-row:2;grid-column:1;flex-direction:column;border-top:0;border-right:1px solid var(--line);position:sticky;top:45px;align-self:start;height:calc(100vh - 45px);padding-top:10px}
+  .nav button{flex:none;text-align:left;padding:10px 18px;font-size:14px;border-top:0;border-left:3px solid transparent}
+  .nav button[aria-current="page"]{border-left-color:var(--accent)}
+  main{grid-row:2;grid-column:2;padding:24px 28px 40px}
+}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.trk{border-left:4px solid var(--tc,var(--line))}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;color:var(--tc,var(--muted));letter-spacing:.03em;text-transform:uppercase}
+.tag{font-size:11.5px;padding:1px 7px;border-radius:9px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.sug{border-color:var(--accent);color:var(--accent)}
+.tag.warn{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
+.tag.good{color:var(--good);border-color:var(--good)}
+.meta{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.note{font-size:13.5px;color:var(--muted);border-left:2px solid var(--line);padding-left:10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:14px}
+.btn:hover{border-color:var(--muted)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.btn.sm{padding:4px 10px;font-size:13px}
+.btn.quiet{border-color:transparent;color:var(--muted);padding-left:6px;padding-right:6px}
+.btn.danger{color:#b3372f}
+.bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--tc,var(--accent));max-width:100%}
+.banner{border-radius:var(--r);padding:12px 16px;background:var(--sunk);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.banner.warn{background:var(--warn-bg);border-color:transparent}
+.banner.good{border-color:var(--good)}
+.lede{color:var(--muted);font-size:14px}
+.running{border:2px solid var(--tc,var(--accent))}
+.clock{font:600 34px/1 var(--mono);font-variant-numeric:tabular-nums}
+.steps{font-size:12.5px;color:var(--muted)}
+.sect{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px}
+.sect h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+form.inline{display:flex;gap:8px}
+form.inline input{flex:1;min-width:0}
+input[type=text],input[type=number],input[type=date],select,textarea{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 10px;width:100%}
+textarea{min-height:70px;resize:vertical}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+label.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-size:14px}
+label.check input{width:auto}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+
+.wkrow{display:grid;grid-template-columns:120px 1fr 92px;gap:10px;align-items:center;font-size:14px}
+.wkrow .bar{height:10px;border-radius:5px}
+.wkrow .r{text-align:right;color:var(--muted)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:92px}
+.day{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%;font-size:11.5px;color:var(--muted)}
+.day i{display:block;width:100%;max-width:34px;border-radius:4px 4px 0 0;background:var(--accent);min-height:2px}
+.day.today b{color:var(--ink)}
+.day b{font-weight:500}
+.srow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.srow:first-child{border-top:0}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:5px 12px;cursor:pointer;font-size:13.5px}
+.chips button[aria-pressed="true"]{background:var(--tc,var(--accent));border-color:var(--tc,var(--accent));color:#fff;font-weight:600}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chips button[aria-pressed="true"]{color:#10161b}}
+details.grp{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+details.grp>summary{padding:11px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
+details.grp>summary span{color:var(--muted);font-weight:400;white-space:nowrap}
+details.item{border-top:1px solid var(--line)}
+details.item>summary{list-style:none;cursor:pointer;padding:9px 14px;display:grid;grid-template-columns:14px 1fr auto;gap:2px 8px;align-items:baseline}
+details.item>summary::-webkit-details-marker{display:none}
+.dot{width:9px;height:9px;border-radius:50%;border:2px solid var(--tc);align-self:center}
+.st-done .dot{background:var(--tc)} .st-done .ttl{color:var(--muted);text-decoration:line-through}
+.st-later .ttl{color:var(--muted)} .st-later .dot{border-style:dotted}
+.item .sub{grid-column:2 / -1;color:var(--muted);font-size:12.5px;display:flex;gap:4px 10px;flex-wrap:wrap}
+.item .acts{padding:4px 14px 12px 36px;display:flex;flex-direction:column;gap:8px}
+.idea{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+.idea:first-child{border-top:0}
+.prow{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;padding:9px 0;border-top:1px solid var(--line);align-items:start}
+.prow:first-child{border-top:0}
+.prow input[type=checkbox]{margin-top:4px;width:17px;height:17px}
+.prow input[type=text]{grid-column:2;font-size:13px;padding:5px 8px}
+.done-t{color:var(--muted);text-decoration:line-through}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px)}
+dialog::backdrop{background:rgba(10,15,20,.5)}
+dialog form{padding:18px;display:flex;flex-direction:column;gap:12px}
+#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion: reduce){#toast{transition:none}}
+.empty{color:var(--muted);font-size:14px;padding:6px 0}
+hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div class="brand">UNITY</div><div class="topmeta" id="topmeta"></div></header>
+  <nav class="nav" id="nav" aria-label="Sections"></nav>
+  <main id="main"></main>
+</div>
+<dialog id="dlg"></dialog>
+<div id="toast" role="status"></div>
+<script>
+"use strict";
+const SEED = /*SEED*/null;
+const VERSION = "1.0";
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const iso = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const todayIso = () => iso(new Date());
+const monday = s => { const d = parse(s); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return iso(d); };
+const daysBetween = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+const fmtDate = (s, o) => parse(s).toLocaleDateString("en-GB", o || { weekday: "short", day: "numeric", month: "short" });
+const hrs = m => String(Math.round(m / 6) / 10);
+const hnum = h => String(Math.round(h * 10) / 10);
+const uid = p => p + "." + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const track = id => SEED.tracks.find(t => t.id === id);
+const MODES = ["0 · No AI (unplugged)", "1 · AI as tutor", "2 · AI as pair", "3 · Delegated to AI"];
+
+/* ---------- storage: IndexedDB, then localStorage, then memory ---------- */
+const DB = {
+  db: null, mode: "memory",
+  open() {
+    return new Promise(res => {
+      try {
+        const r = indexedDB.open("unity", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("kv");
+        r.onsuccess = () => { this.db = r.result; this.mode = "device database"; res(); };
+        r.onerror = () => res(); r.onblocked = () => res();
+      } catch (e) { res(); }
+    });
+  },
+  get() {
+    return new Promise(res => {
+      if (this.db) {
+        try {
+          const q = this.db.transaction("kv").objectStore("kv").get("state");
+          q.onsuccess = () => res(q.result || null); q.onerror = () => res(null);
+        } catch (e) { res(null); }
+      } else {
+        try { const v = localStorage.getItem("unity.state"); if (v) this.mode = "browser storage"; res(v ? JSON.parse(v) : null); }
+        catch (e) { res(null); }
+      }
+    });
+  },
+  put(v) {
+    if (this.db) { try { this.db.transaction("kv", "readwrite").objectStore("kv").put(v, "state"); return; } catch (e) { /* fall through */ } }
+    try { localStorage.setItem("unity.state", JSON.stringify(v)); this.mode = "browser storage"; } catch (e) { this.mode = "memory"; }
+  }
+};
+
+/* ---------- state ---------- */
+let S = null;
+const UI = { openG: new Set(), openI: null, showDone: false, armed: null };
+let saveT = 0;
+function save() { S.u = Date.now(); clearTimeout(saveT); saveT = setTimeout(() => DB.put(S), 120); }
+function touch(o) { o.u = Date.now(); return o; }
+
+function fresh() {
+  const t = todayIso(), wd = (parse(t).getDay() + 6) % 7;
+  const start = wd >= 4 ? addDays(monday(t), 7) : monday(t);
+  const targets = {}; SEED.tracks.forEach(x => targets[x.id] = x.target);
+  return {
+    v: 1, created: Date.now(), u: Date.now(),
+    settings: { start, targets, ramp: [25, 32], pauseMin: 8 },
+    items: SEED.items.map(x => ({ ...x, u: 0 })), sessions: [], ideas: [],
+    proofs: SEED.proofs.map(x => ({ ...x, u: 0 })), criteria: SEED.criteria.map(x => ({ ...x, u: 0 })),
+    pause: null, pauses: [], timer: null, reviews: {}, view: "today", planTrack: "sw", lastExport: 0
+  };
+}
+
+/* ---------- derived ---------- */
+const live = () => S.sessions.filter(s => !s.del);
+function logged() { const m = {}; for (const s of S.sessions) { if (s.del || !s.it) continue; m[s.it] = (m[s.it] || 0) + s.m; } return m; }
+const openItems = tr => S.items.filter(i => i.tr === tr && i.st === "open").sort((a, b) => a.o - b.o);
+const nextItem = tr => openItems(tr)[0] || null;
+const item = id => S.items.find(i => i.id === id);
+function weekSessions(wk) { const end = addDays(wk, 7); return live().filter(s => s.d >= wk && s.d < end); }
+function pauseOn(d) { const p = S.pause; return p && d >= p.from && d <= p.until ? p : null; }
+function weekPlan(wk) {
+  const base = S.settings.targets, total = Object.values(base).reduce((a, b) => a + b, 0);
+  let goal, mode; const p = S.pause;
+  if (p && p.from <= addDays(wk, 6) && p.until >= wk) { goal = Math.min(p.min, total); mode = "pause"; }
+  else if (wk < S.settings.start) { goal = 0; mode = "warmup"; }
+  else {
+    const idx = Math.round((parse(wk) - parse(S.settings.start)) / 6048e5), r = S.settings.ramp;
+    if (idx < r.length) { goal = Math.min(r[idx], total); mode = "ramp"; } else { goal = total; mode = "full"; }
+  }
+  const f = total ? goal / total : 0, per = {};
+  for (const k in base) per[k] = base[k] * f;
+  return { goal, per, mode, total };
+}
+function weekStatus(wk) {
+  const plan = weekPlan(wk), act = {};
+  for (const s of weekSessions(wk)) act[s.tr] = (act[s.tr] || 0) + s.m;
+  const rows = SEED.tracks.map((tr, i) => ({ tr, i, target: plan.per[tr.id] || 0, base: S.settings.targets[tr.id] || 0, mins: act[tr.id] || 0 }));
+  const mins = rows.reduce((a, r) => a + r.mins, 0);
+  return { plan, rows, mins };
+}
+function lastSession() { let b = null; for (const s of live()) if (!b || s.ts > b.ts) b = s; return b; }
+
+/* ---------- toast and dialog ---------- */
+let toastT = 0;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2600); }
+let dlgSubmit = null;
+function openDlg(html, onSubmit) {
+  const d = $("#dlg"); d.innerHTML = `<form id="dform">${html}</form>`; dlgSubmit = onSubmit;
+  if (!d.open) d.showModal();
+}
+function closeDlg() { const d = $("#dlg"); if (d.open) d.close(); d.innerHTML = ""; dlgSubmit = null; }
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === "dform") { const data = Object.fromEntries(new FormData(f)); if (e.submitter && e.submitter.name) data[e.submitter.name] = e.submitter.value; if (dlgSubmit && dlgSubmit(data, f) === false) return; closeDlg(); render(); return; }
+  const fn = FORMS[f.dataset.form]; if (fn) { fn(Object.fromEntries(new FormData(f)), f); render(); }
+});
+const trackOpts = (sel, withRev) => SEED.tracks.filter(t => withRev || !t.recurring).map(t => `<option value="${t.id}"${t.id === sel ? " selected" : ""}>${esc(t.name)}</option>`).join("");
+const modeOpts = sel => `<option value="">Not recorded</option>` + MODES.map((m, i) => `<option value="${i}"${String(sel) === String(i) ? " selected" : ""}>${m}</option>`).join("");
+
+/* ---------- sessions ---------- */
+function startTimer(tr, it, label, off) {
+  if (S.timer) { toast("A session is already running. Stop it first."); return; }
+  S.timer = { tr, it: it || null, label: label || "", off: !!off, start: Date.now() };
+  S.view = "today"; save(); render(); window.scrollTo(0, 0);
+}
+function sessionLabel(s) { const i = s.it && item(s.it); return i ? i.t : (s.label || track(s.tr).name); }
+function closeSessionDlg() {
+  const t = S.timer; if (!t) return;
+  const mins = Math.max(1, Math.round((Date.now() - t.start) / 60000));
+  const it = t.it && item(t.it), L = logged();
+  const reached = it && it.h > 0 && ((L[it.id] || 0) + mins) / 60 >= it.h;
+  openDlg(`
+    <h2>Log this session</h2>
+    <p class="lede">${esc(it ? it.t : t.label || track(t.tr).name)}</p>
+    <div class="grid2">
+      <label>Minutes<input type="number" name="m" min="1" max="900" value="${mins}" required id="f-m"></label>
+      <label>AI help used<select name="mode" id="f-mode">${modeOpts("")}</select></label>
+    </div>
+    ${it ? `<label class="check"><input type="checkbox" name="fin" id="f-fin"> I finished this item${reached ? " (planned hours reached)" : ""}</label>
+    <label>One line for next time: where to pick up<input type="text" name="next" id="f-next" value="${esc(it.next || "")}" placeholder="e.g. Start at drill D01.1, question 3"></label>` : ""}
+    <label>Note (optional)<textarea name="note" id="f-note"></textarea></label>
+    <div class="row"><button class="btn pri" type="submit">Save session</button>
+      <button class="btn" type="button" data-act="dlg-close">Keep running</button>
+      <button class="btn quiet danger" type="button" data-act="discard-timer">Discard</button></div>`,
+    d => {
+      const s = touch({ id: uid("S"), d: todayIso(), ts: Date.now(), m: Math.max(1, +d.m || mins), tr: t.tr, it: t.it, label: t.label, mode: d.mode === "" ? null : +d.mode, note: (d.note || "").trim(), off: t.off });
+      S.sessions.push(s);
+      if (it) { it.next = (d.next || "").trim(); if (d.fin) { it.st = "done"; it.doneAt = todayIso(); } touch(it); }
+      S.timer = null; save(); toast(`Logged ${hrs(s.m)} h`);
+    });
+}
+function pastSessionDlg() {
+  const tr = S.planTrack || "sw";
+  openDlg(`
+    <h2>Log a past session</h2>
+    <div class="grid2">
+      <label>Date<input type="date" name="d" id="p-d" value="${todayIso()}" max="${todayIso()}" required></label>
+      <label>Minutes<input type="number" name="m" id="p-m" min="1" max="900" value="60" required></label>
+    </div>
+    <label>Track<select name="tr" id="p-tr" data-chg="past-track">${trackOpts(tr, true)}</select></label>
+    <label>Item<select name="it" id="p-it">${itemOpts(tr)}</select></label>
+    <label>AI help used<select name="mode" id="p-mode">${modeOpts("")}</select></label>
+    <label>Note (optional)<input type="text" name="note" id="p-note"></label>
+    <div class="row"><button class="btn pri" type="submit">Save</button><button class="btn" type="button" data-act="dlg-close">Cancel</button></div>`,
+    d => {
+      const off = d.it === "__off";
+      S.sessions.push(touch({ id: uid("S"), d: d.d, ts: parse(d.d).getTime() + 12 * 36e5, m: Math.max(1, +d.m || 60), tr: d.tr, it: d.it && !off ? d.it : null, label: off ? (d.note || "Off-plan work") : "", mode: d.mode === "" ? null : +d.mode, note: (d.note || "").trim(), off }));
+      save(); toast("Session logged");
+    });
+}
+function itemOpts(tr) {
+  const t = track(tr);
+  if (t.recurring) return `<option value="">${esc(t.label)}</option>`;
+  return openItems(tr).slice(0, 25).map(i => `<option value="${esc(i.id)}">${esc(i.t.slice(0, 70))}</option>`).join("") + `<option value="__off">Something not on the plan</option>`;
+}
+
+/* ---------- views ---------- */
+function renderNav() {
+  const parked = S.ideas.filter(i => i.st === "parked").length;
+  const tabs = [["today", "Today"], ["week", "Week"], ["plan", "Plan"], ["ideas", "Ideas"], ["proof", "Proof"], ["more", "More"]];
+  $("#nav").innerHTML = tabs.map(([id, n]) => `<button data-act="view" data-v="${id}"${S.view === id ? ' aria-current="page"' : ""}>${n}${id === "ideas" && parked ? `<span class="badge">${parked}</span>` : ""}</button>`).join("");
+  const wk = monday(todayIso()), st = weekStatus(wk);
+  const goal = st.plan.goal, pct = goal ? Math.min(100, st.mins / (goal * 60) * 100) : 0;
+  $("#topmeta").innerHTML = `<span class="num">${hrs(st.mins)}${goal ? " / " + hnum(goal) : ""} h this week</span>${goal ? `<span class="meter" aria-hidden="true"><i style="width:${pct}%"></i></span>` : ""}`;
+}
+
+function lessonTag(i) {
+  if (i.c) return i.src ? `<span class="tag">Source: ${esc(i.src)}</span>` : "";
+  return `<span class="tag warn">Lesson not written yet. Ask Claude for it.</span>`;
+}
+function nudges() {
+  const out = [], wk = monday(todayIso()), ws = weekSessions(wk), L = logged();
+  const tot = ws.reduce((a, s) => a + s.m, 0), offS = ws.filter(s => s.off), off = offS.reduce((a, s) => a + s.m, 0);
+  if (off >= 60 && off >= 0.2 * tot) {
+    const names = [...new Set(offS.map(s => s.label || "unnamed"))].slice(0, 3).join(", ");
+    out.push(`<b>${hrs(off)} h went off the plan this week</b> (${esc(names)}). If it matters, add it to Ideas and promote it properly. If it doesn't, the plan is still here.`);
+  }
+  for (const tr of SEED.tracks) {
+    if (tr.recurring) continue;
+    const started = S.items.filter(i => i.tr === tr.id && i.st === "open" && L[i.id] > 0).sort((a, b) => a.o - b.o);
+    if (started.length > 2) out.push(`<b>${started.length} ${esc(tr.name)} items are open at once.</b> Finishing “${esc(started[0].t)}” first will move the queue.`);
+  }
+  const old = S.ideas.filter(i => i.st === "parked" && Date.now() - i.ts > 7 * 864e5);
+  if (old.length >= 3) out.push(`<b>${old.length} ideas have waited over a week.</b> Decide each one in Ideas: promote, schedule or drop.`);
+  if (live().length >= 5 && Date.now() - (S.lastExport || 0) > 7 * 864e5) out.push(`<b>No backup in the last week.</b> Export one from More, and import it on your other device.`);
+  return out;
+}
+
+function viewToday() {
+  const t = todayIso(), wk = monday(t), st = weekStatus(wk), L = logged(), h = [];
+  const p = pauseOn(t), last = lastSession();
+  h.push(`<div><h2>${fmtDate(t, { weekday: "long", day: "numeric", month: "long" })}</h2>
+    <p class="lede">${st.plan.mode === "pause" ? `Engagement week. Minimum ${hnum(st.plan.goal)} h.` :
+      st.plan.mode === "warmup" ? `Warm-up days. Targets begin ${fmtDate(S.settings.start)}; anything you log now counts.` :
+      st.plan.mode === "ramp" ? `Ramp week. Target ${hnum(st.plan.goal)} h, building to ${hnum(st.plan.total)}.` : `Target ${hnum(st.plan.goal)} h this week.`}</p></div>`);
+  if (p) h.push(`<div class="banner"><div><b>Paused for: ${esc(p.reason || "an engagement")}</b>, until ${fmtDate(p.until)}.</div>
+    <div class="lede">Your queues are frozen where you left them. One short session a day keeps the thread.</div>
+    <div class="row"><button class="btn sm" data-act="end-pause">End the pause now</button></div></div>`);
+  else if (S.pause && S.pause.until < t) h.push(`<div class="banner good"><div><b>Your engagement ended ${fmtDate(S.pause.until)}.</b> Nothing was lost; each queue resumes at the same item.</div>
+    <div class="row"><button class="btn sm pri" data-act="end-pause">Resume the full plan</button></div></div>`);
+  if (!S.timer) {
+    if (!last) h.push(`<div class="banner"><div><b>Start with one session.</b> Pick the suggested card, press Start, and stop when you have had enough. Nothing is behind.</div></div>`);
+    else { const gap = daysBetween(last.d, t); if (gap >= 3) h.push(`<div class="banner good"><div><b>Welcome back.</b> Your last session was ${fmtDate(last.d)}: ${esc(sessionLabel(last))}.</div><div class="lede">The queues did not move while you were away. Start with the suggested card.</div></div>`); }
+  }
+  if (S.timer) {
+    const tm = S.timer, it = tm.it && item(tm.it);
+    h.push(`<article class="card trk running" style="--tc:var(--c-${tm.tr})">
+      <div class="card-h"><span class="chip">${esc(track(tm.tr).name)} · in session</span>${tm.off ? `<span class="tag warn">Off the plan</span>` : ""}</div>
+      <h3>${esc(it ? it.t : tm.label || track(tm.tr).label || "")}</h3>
+      <div class="clock" id="clock">00:00</div>
+      <div class="steps">Recall the last session (5 min) · Learn · Do · Test yourself · Log</div>
+      ${it && it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : ""}
+      <div class="row"><button class="btn pri" data-act="stop">Stop and log</button></div></article>`);
+  }
+  const ns = nudges();
+  for (const n of ns) h.push(`<div class="banner warn"><div>${n}</div></div>`);
+
+  const rows = st.rows.slice().sort((a, b) => {
+    const ra = a.base > 0 ? a.mins / ((a.target || a.base) * 60) : 9, rb = b.base > 0 ? b.mins / ((b.target || b.base) * 60) : 9;
+    return ra - rb || a.i - b.i;
+  });
+  h.push(`<div class="sect"><h2>Next up</h2></div>`);
+  let first = true;
+  for (const r of rows) {
+    const tr = r.tr, it = tr.recurring ? null : nextItem(tr.id);
+    if (!tr.recurring && !it) continue;
+    const sug = first && !S.timer && r.base > 0 && (r.target === 0 || r.mins < r.target * 60); first = false;
+    const wkTxt = r.target > 0 ? `${hrs(r.mins)} / ${hnum(r.target)} h` : (r.mins ? `${hrs(r.mins)} h` : "");
+    if (tr.recurring) {
+      h.push(`<article class="card trk" style="--tc:var(--c-${tr.id})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="row">${sug ? `<span class="tag sug">Suggested now</span>` : ""}<span class="meta num">${wkTxt}</span></span></div>
+        <h3>${esc(tr.label)}</h3><div class="row"><button class="btn${sug ? " pri" : ""}" data-act="start" data-tr="${tr.id}">Start</button></div></article>`);
+      continue;
+    }
+    const lm = L[it.id] || 0, pct = it.h > 0 ? Math.min(100, lm / (it.h * 60) * 100) : 0;
+    h.push(`<article class="card trk" style="--tc:var(--c-${tr.id})">
+      <div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="row">${sug ? `<span class="tag sug">Suggested now</span>` : ""}<span class="meta num">${wkTxt}</span></span></div>
+      <h3>${esc(it.t)}</h3>
+      <div class="meta"><code>${esc(it.id)}</code>${it.h > 0 ? `<span class="num">${hrs(lm)} of ${hnum(it.h)} h</span>` : (lm ? `<span class="num">${hrs(lm)} h so far</span>` : "")}${lessonTag(it)}</div>
+      ${it.h > 0 ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
+      ${it.next ? `<div class="note">Pick up at: ${esc(it.next)}</div>` : (it.n ? `<div class="note">${esc(it.n)}</div>` : "")}
+      <div class="row"><button class="btn${sug ? " pri" : ""}" data-act="start" data-tr="${tr.id}" data-it="${esc(it.id)}">Start</button>
+        <button class="btn" data-act="item-done" data-it="${esc(it.id)}">Mark done</button>
+        <button class="btn quiet" data-act="open-plan" data-tr="${tr.id}">See queue</button></div></article>`);
+  }
+  h.push(`<div class="sect"><h2>Caught an idea?</h2></div>
+    <form class="inline" data-form="capture"><input type="text" name="text" id="cap-today" placeholder="Park it here in one line, then get back to the session" required maxlength="300" aria-label="Park an idea"><button class="btn" type="submit">Park</button></form>
+    <div class="row"><button class="btn quiet" data-act="off-plan">Work on something not on the plan</button><button class="btn quiet" data-act="past">Log a past session</button></div>`);
+  return h.join("");
+}
+
+function viewWeek() {
+  const t = todayIso(), wk = monday(t), st = weekStatus(wk), ws = weekSessions(wk), h = [];
+  h.push(`<div><h2>Week of ${fmtDate(wk, { day: "numeric", month: "long" })}</h2><p class="lede num">${hrs(st.mins)} h logged${st.plan.goal ? ` of ${hnum(st.plan.goal)} h` : ""}${st.plan.mode === "pause" ? " (engagement minimum)" : st.plan.mode === "ramp" ? " (ramp week)" : st.plan.mode === "warmup" ? ". Warm-up, no target yet" : ""}</p></div>`);
+  h.push(`<div class="card">` + st.rows.filter(r => r.base > 0 || r.mins > 0).map(r => {
+    const pct = r.target > 0 ? Math.min(100, r.mins / (r.target * 60) * 100) : (r.mins ? 100 : 0);
+    return `<div class="wkrow" style="--tc:var(--c-${r.tr.id})"><span>${esc(r.tr.name)}</span><div class="bar"><i style="width:${pct}%"></i></div><span class="r num">${hrs(r.mins)}${r.target > 0 ? " / " + hnum(r.target) : ""} h</span></div>`;
+  }).join("") + `</div>`);
+  const dm = []; let mx = 60;
+  for (let i = 0; i < 7; i++) { const d = addDays(wk, i); const m = ws.filter(s => s.d === d).reduce((a, s) => a + s.m, 0); dm.push([d, m]); mx = Math.max(mx, m); }
+  h.push(`<div class="card"><div class="days">` + dm.map(([d, m]) => `<div class="day${d === t ? " today" : ""}"><span class="num">${m ? hrs(m) : ""}</span><i style="height:${Math.round(m / mx * 60)}px"></i><b>${fmtDate(d, { weekday: "short" })}</b></div>`).join("") + `</div></div>`);
+
+  const rv = S.reviews[wk];
+  h.push(`<div class="sect"><h2>Close the week</h2></div><div class="card">` + (rv ?
+    `<div><span class="tag good">Closed ${fmtDate(iso(new Date(rv.ts)))}</span></div>${rv.note ? `<div class="note">${esc(rv.note)}</div>` : ""}<div class="row"><button class="btn sm" data-act="reopen-week">Edit</button></div>` :
+    `<p class="lede">Ten minutes, once a week: decide every parked idea, then write one line on what to change.</p>
+     <form data-form="close-week" style="display:flex;flex-direction:column;gap:10px"><label>What worked, and one thing to change next week<textarea name="note" id="wk-note"></textarea></label>
+     <div class="row"><button class="btn pri" type="submit">Close this week</button>${S.ideas.some(i => i.st === "parked") ? `<button class="btn" type="button" data-act="view" data-v="ideas">Decide parked ideas first</button>` : ""}</div></form>`) + `</div>`);
+
+  h.push(`<div class="sect"><h2>Sessions this week</h2><button class="btn sm" data-act="past">Log a past session</button></div><div class="card">` +
+    (ws.length ? ws.slice().sort((a, b) => b.ts - a.ts).map(s => `<div class="srow"><div><span class="chip" style="--tc:var(--c-${s.tr})">${esc(track(s.tr).short)}</span> ${esc(sessionLabel(s))}${s.off ? ` <span class="tag warn">off plan</span>` : ""}
+      <div class="meta">${fmtDate(s.d)}${s.mode !== null && s.mode !== undefined ? ` · AI mode ${s.mode}` : ""}${s.note ? ` · ${esc(s.note)}` : ""}</div></div>
+      <div class="row"><span class="num">${hrs(s.m)} h</span><button class="btn sm quiet danger" data-act="del-session" data-id="${s.id}">${UI.armed === s.id ? "Confirm" : "Delete"}</button></div></div>`).join("") : `<div class="empty">No sessions yet this week.</div>`) + `</div>`);
+
+  const hist = [];
+  for (let i = 1; i <= 8; i++) { const w = addDays(wk, -7 * i); if (w < monday(iso(new Date(S.created)))) break; const s2 = weekStatus(w); hist.push([w, s2.mins, s2.plan.goal, s2.plan.mode]); }
+  if (hist.length) h.push(`<div class="sect"><h2>Earlier weeks</h2></div><div class="card">` + hist.map(([w, m, g, mode]) => `<div class="wkrow"><span>${fmtDate(w, { day: "numeric", month: "short" })}</span><div class="bar"><i style="width:${g ? Math.min(100, m / (g * 60) * 100) : (m ? 100 : 0)}%"></i></div><span class="r num">${hrs(m)}${g ? " / " + hnum(g) : ""} h${mode === "pause" ? " ·P" : ""}</span></div>`).join("") + `</div>`);
+  return h.join("");
+}
+
+function viewPlan() {
+  const trId = S.planTrack || "sw", tr = track(trId), L = logged(), h = [];
+  const all = S.items.filter(i => i.tr === trId && i.st !== "removed").sort((a, b) => a.o - b.o);
+  const open = all.filter(i => i.st === "open"), done = all.filter(i => i.st === "done");
+  const remain = open.reduce((a, i) => a + Math.max(0, i.h - (L[i.id] || 0) / 60), 0), wkT = S.settings.targets[trId] || 0;
+  h.push(`<div><h2>Plan</h2><p class="lede">Each track is a queue. Work the top item; move things when the order is wrong.</p></div>`);
+  h.push(`<div class="chips">` + SEED.tracks.filter(t => !t.recurring).map(t => `<button data-act="plan-track" data-tr="${t.id}" style="--tc:var(--c-${t.id})" aria-pressed="${t.id === trId}">${esc(t.name)}</button>`).join("") + `</div>`);
+  h.push(`<div class="card trk" style="--tc:var(--c-${trId})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="meta num">${done.length} of ${all.length} items done</span></div>
+    <div class="meta num">${remain > 0 ? `${hnum(remain)} h of planned work left${wkT > 0 ? `, about ${Math.ceil(remain / wkT)} weeks at ${hnum(wkT)} h a week` : ""}` : "No planned hours left in this queue"}</div>
+    ${open.length ? `<div class="note">Top of the queue: ${open.slice(0, 3).map(i => esc(i.t)).join(" → ")}</div>` : ""}
+    <div class="row"><button class="btn sm" data-act="add-item">Add an item</button><label class="check" style="font-size:13px"><input type="checkbox" data-chg="show-done"${UI.showDone ? " checked" : ""}> Show finished items</label></div></div>`);
+  const groups = []; const gi = {};
+  for (const i of all) { if (!(i.g in gi)) { gi[i.g] = groups.length; groups.push({ g: i.g, items: [] }); } groups[gi[i.g]].items.push(i); }
+  const nextId = open[0] && open[0].id, nextG = open[0] && open[0].g;
+  if (nextG && !UI.touchedG) UI.openG.add(trId + "|" + nextG);
+  for (const g of groups) {
+    const key = trId + "|" + g.g, d = g.items.filter(i => i.st === "done").length, hh = g.items.reduce((a, i) => a + i.h, 0);
+    const vis = g.items.filter(i => UI.showDone || i.st !== "done");
+    h.push(`<details class="grp" data-g="${esc(key)}"${UI.openG.has(key) ? " open" : ""} style="--tc:var(--c-${trId})"><summary>${esc(g.g)}<span class="num">${d}/${g.items.length} · ${hnum(hh)} h</span></summary>` +
+      (UI.openG.has(key) ? (vis.length ? vis.map(i => itemRow(i, L, i.id === nextId)).join("") : `<div class="empty" style="padding:8px 14px">All finished here.</div>`) : "") + `</details>`);
+  }
+  return h.join("");
+}
+function itemRow(i, L, isNext) {
+  const lm = L[i.id] || 0, openI = UI.openI === i.id;
+  return `<details class="item st-${i.st}" data-i="${esc(i.id)}"${openI ? " open" : ""}><summary><span class="dot"></span><span class="ttl">${esc(i.t)}</span><span class="num meta">${i.h > 0 ? `${hrs(lm)} / ${hnum(i.h)} h` : (lm ? hrs(lm) + " h" : "")}</span>
+    <span class="sub"><code>${esc(i.id)}</code>${isNext ? `<span class="tag sug">Next</span>` : ""}${i.st === "later" ? `<span class="tag">Set aside</span>` : ""}${i.st === "open" && !i.c ? `<span class="tag warn">Lesson to request</span>` : ""}</span></summary>` +
+    (openI ? `<div class="acts">${i.n ? `<div class="note">${esc(i.n)}</div>` : ""}${i.next ? `<div class="note">Pick up at: ${esc(i.next)}</div>` : ""}${i.src ? `<div class="meta">Source: ${esc(i.src)}</div>` : ""}
+      <div class="row">${i.st === "open" ? `<button class="btn sm pri" data-act="start" data-tr="${i.tr}" data-it="${esc(i.id)}">Start</button>
+        <button class="btn sm" data-act="item-top" data-it="${esc(i.id)}">Do next</button>
+        <button class="btn sm" data-act="item-move" data-dir="-1" data-it="${esc(i.id)}">Earlier</button>
+        <button class="btn sm" data-act="item-move" data-dir="1" data-it="${esc(i.id)}">Later</button>
+        <button class="btn sm" data-act="item-done" data-it="${esc(i.id)}">Mark done</button>
+        <button class="btn sm" data-act="item-aside" data-it="${esc(i.id)}">Set aside</button>` :
+        `<button class="btn sm" data-act="item-reopen" data-it="${esc(i.id)}">Put back in the queue</button>`}
+        <button class="btn sm" data-act="item-edit" data-it="${esc(i.id)}">Edit</button></div></div>` : "") + `</details>`;
+}
+
+function viewIdeas() {
+  const parked = S.ideas.filter(i => i.st === "parked").sort((a, b) => b.ts - a.ts), dec = S.ideas.filter(i => i.st !== "parked").sort((a, b) => (b.u || 0) - (a.u || 0)), h = [];
+  h.push(`<div><h2>Ideas</h2><p class="lede">Every new idea lands here first. It stays safe, and the plan stays intact until you decide.</p></div>
+    <form class="inline" data-form="capture"><input type="text" name="text" id="cap-ideas" placeholder="A new idea, in one line" required maxlength="300" aria-label="New idea"><button class="btn pri" type="submit">Park</button></form>`);
+  h.push(`<div class="sect"><h2>Parked (${parked.length})</h2></div><div class="card">` + (parked.length ? parked.map(i => `<div class="idea"><div>${esc(i.text)}</div><div class="meta">Parked ${fmtDate(iso(new Date(i.ts)))}</div>
+    <div class="row"><button class="btn sm" data-act="idea-promote" data-id="${i.id}">Promote: do it next</button><button class="btn sm" data-act="idea-schedule" data-id="${i.id}">Schedule: end of a queue</button><button class="btn sm quiet" data-act="idea-drop" data-id="${i.id}">Drop</button></div></div>`).join("") : `<div class="empty">Nothing parked. When something pulls at you mid-session, write it here and carry on.</div>`) + `</div>`);
+  if (dec.length) h.push(`<div class="sect"><h2>Decided</h2></div><div class="card">` + dec.slice(0, 30).map(i => `<div class="idea"><div class="${i.st === "dropped" ? "done-t" : ""}">${esc(i.text)}</div><div class="meta"><span class="tag">${i.st === "promoted" ? "Promoted" : i.st === "scheduled" ? "Scheduled" : "Dropped"}</span>${i.tr ? esc(track(i.tr).name) : ""}${i.gave ? ` · gave way: ${esc(i.gave)}` : ""}${i.st === "dropped" ? `<button class="btn sm quiet" data-act="idea-restore" data-id="${i.id}">Restore</button>` : ""}</div></div>`).join("") + `</div>`);
+  return h.join("");
+}
+
+function viewProof() {
+  const h = [], cr = S.criteria.filter(c => !c.del), allDone = cr.length && cr.every(c => c.done);
+  h.push(`<div><h2>Proof</h2><p class="lede">What you will be able to show in six months, and what must be true before the startup resumes. These are drafts: edit them until they are yours.</p></div>`);
+  for (const tr of SEED.tracks) {
+    const ps = S.proofs.filter(p => p.tr === tr.id && !p.del); if (!ps.length) continue;
+    h.push(`<div class="card trk" style="--tc:var(--c-${tr.id})"><div class="card-h"><span class="chip">${esc(tr.name)}</span><span class="meta num">${ps.filter(p => p.done).length}/${ps.length}</span></div>` +
+      ps.map(p => `<div class="prow"><input type="checkbox" id="pc-${p.id}" data-chg="proof-done" data-id="${p.id}"${p.done ? " checked" : ""}><label for="pc-${p.id}" class="${p.done ? "done-t" : ""}" style="color:var(--ink);font-size:14.5px;flex-direction:row;justify-content:space-between;gap:8px"><span>${esc(p.t)}</span></label>
+        <input type="text" id="pe-${p.id}" data-chg="proof-ev" data-id="${p.id}" value="${esc(p.ev)}" placeholder="Evidence: a link, file name or date" aria-label="Evidence"></div>`).join("") + `</div>`);
+  }
+  h.push(`<form class="inline" data-form="add-proof"><select name="tr" id="np-tr" style="max-width:150px" aria-label="Track">${trackOpts("sw")}</select><input type="text" name="t" id="np-t" placeholder="Add a proof" required maxlength="200" aria-label="New proof"><button class="btn" type="submit">Add</button></form>`);
+  h.push(`<div class="sect"><h2>Before the startup resumes</h2></div>`);
+  if (allDone) h.push(`<div class="banner good"><b>Every criterion is met.</b> Set the date and resume the startup build.</div>`);
+  h.push(`<div class="card">` + cr.map(c => `<div class="prow"><input type="checkbox" id="cc-${c.id}" data-chg="crit-done" data-id="${c.id}"${c.done ? " checked" : ""}><label for="cc-${c.id}" class="${c.done ? "done-t" : ""}" style="color:var(--ink);font-size:14.5px;flex-direction:row;justify-content:space-between;gap:8px"><span>${esc(c.t)}</span><button class="btn sm quiet" type="button" data-act="crit-del" data-id="${c.id}">Remove</button></label></div>`).join("") +
+    `<form class="inline" data-form="add-crit" style="margin-top:8px"><input type="text" name="t" id="nc-t" placeholder="Add a criterion" required maxlength="200" aria-label="New criterion"><button class="btn" type="submit">Add</button></form></div>`);
+  return h.join("");
+}
+
+function viewMore() {
+  const h = [], p = S.pause, t = todayIso(), act = pauseOn(t), tg = S.settings.targets, total = Object.values(tg).reduce((a, b) => a + b, 0);
+  h.push(`<div><h2>More</h2></div>`);
+  h.push(`<div class="sect"><h2>Pause for an engagement</h2></div><div class="card">` + (p && p.until >= t ?
+    `<div><b>${act ? "Paused" : "Pause scheduled"}: ${esc(p.reason || "engagement")}</b></div><div class="meta">${fmtDate(p.from)} to ${fmtDate(p.until)} · minimum ${hnum(p.min)} h a week</div><div class="row"><button class="btn sm" data-act="end-pause">End the pause</button></div>` :
+    `<p class="lede">When paid work or life takes over, pause. The weekly target drops to a minimum and every queue stays where it is.</p>
+     <form data-form="pause" style="display:flex;flex-direction:column;gap:10px"><label>What for<input type="text" name="reason" id="pz-r" placeholder="e.g. Site supervision job" maxlength="80"></label>
+     <div class="grid2"><label>From<input type="date" name="from" id="pz-f" value="${t}" required></label><label>Until<input type="date" name="until" id="pz-u" value="${addDays(t, 13)}" required></label><label>Minimum hours a week<input type="number" name="min" id="pz-m" min="0" max="40" step="0.5" value="${S.settings.pauseMin}"></label></div>
+     <div class="row"><button class="btn" type="submit">Start the pause</button></div></form>`) + `</div>`);
+  h.push(`<div class="sect"><h2>Weekly split</h2></div><div class="card"><form data-form="settings" style="display:flex;flex-direction:column;gap:10px">
+    <div class="grid2">` + SEED.tracks.map(tr => `<label>${esc(tr.name)} (h)<input type="number" name="t_${tr.id}" id="st-${tr.id}" min="0" max="60" step="0.5" value="${tg[tr.id] || 0}"></label>`).join("") + `</div>
+    <div class="meta num">Full week: ${hnum(total)} h</div>
+    <div class="grid2"><label>Targets start (a Monday)<input type="date" name="start" id="st-start" value="${S.settings.start}"></label><label>Ramp: week 1 total (h)<input type="number" name="r0" id="st-r0" min="0" max="80" step="0.5" value="${S.settings.ramp[0] ?? ""}"></label><label>Ramp: week 2 total (h)<input type="number" name="r1" id="st-r1" min="0" max="80" step="0.5" value="${S.settings.ramp[1] ?? ""}"></label></div>
+    <div class="row"><button class="btn" type="submit">Save split</button></div></form></div>`);
+  h.push(`<div class="sect"><h2>Backup and moving between devices</h2></div><div class="card">
+    <p class="lede">Your data lives on this device only. Export a backup weekly. To bring phone and laptop together, export on one and import with Merge on the other.</p>
+    <div class="row"><button class="btn pri" data-act="export">Export backup</button><button class="btn" data-act="export-csv">Export sessions (CSV)</button><button class="btn" data-act="copy-backup">Copy backup as text</button></div>
+    <hr><label>Import a backup file<input type="file" id="imp-file" accept=".json,application/json"></label>
+    <div class="row"><button class="btn" data-act="import" data-mode="merge">Merge into this device</button><button class="btn quiet danger" data-act="import" data-mode="replace">${UI.armed === "replace" ? "Confirm: replace everything" : "Replace this device's data"}</button></div>
+    <div class="meta">${S.lastExport ? "Last export " + fmtDate(iso(new Date(S.lastExport))) : "No export yet"} · stored in: ${esc(DB.mode)} · ${live().length} sessions · version ${VERSION}</div>
+    <div class="row"><button class="btn sm" data-act="persist">Ask the browser to protect this data</button></div></div>`);
+  h.push(`<div class="sect"><h2>Start over</h2></div><div class="card"><p class="lede">Clears sessions, ideas and edits and reloads the original plan. Export a backup first.</p><div class="row"><button class="btn quiet danger" data-act="reset">${UI.armed === "reset" ? "Confirm: erase and reload the plan" : "Reset this device"}</button></div></div>`);
+  return h.join("");
+}
+
+const VIEWS = { today: viewToday, week: viewWeek, plan: viewPlan, ideas: viewIdeas, proof: viewProof, more: viewMore };
+function render() {
+  if (!VIEWS[S.view]) S.view = "today";
+  renderNav();
+  $("#main").innerHTML = VIEWS[S.view]();
+  tick();
+}
+function tick() {
+  const c = $("#clock");
+  if (S && S.timer) {
+    const s = Math.floor((Date.now() - S.timer.start) / 1000), hh = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60;
+    const txt = (hh ? hh + ":" : "") + pad(mm) + ":" + pad(ss);
+    if (c) c.textContent = txt; document.title = "● " + txt + " UNITY";
+  } else if (document.title !== "UNITY") document.title = "UNITY";
+}
+setInterval(tick, 1000);
+
+/* ---------- forms ---------- */
+const FORMS = {
+  capture(d, f) { const text = (d.text || "").trim(); if (!text) return; S.ideas.push(touch({ id: uid("I"), ts: Date.now(), text, st: "parked" })); save(); toast("Parked. Back to the session."); },
+  "close-week"(d) { S.reviews[monday(todayIso())] = { ts: Date.now(), note: (d.note || "").trim() }; save(); toast("Week closed"); },
+  "add-proof"(d) { S.proofs.push(touch({ id: uid("PR"), tr: d.tr, t: d.t.trim(), done: 0, ev: "" })); save(); },
+  "add-crit"(d) { S.criteria.push(touch({ id: uid("CR"), t: d.t.trim(), done: 0 })); save(); },
+  pause(d) {
+    if (d.until < d.from) { toast("The end date is before the start date."); return; }
+    S.pause = { from: d.from, until: d.until, reason: (d.reason || "").trim(), min: Math.max(0, +d.min || 0) }; S.settings.pauseMin = S.pause.min; save(); toast("Paused. Queues are frozen in place.");
+  },
+  settings(d) {
+    for (const tr of SEED.tracks) S.settings.targets[tr.id] = Math.max(0, +d["t_" + tr.id] || 0);
+    if (d.start) S.settings.start = monday(d.start);
+    S.settings.ramp = [d.r0, d.r1].filter(x => x !== "" && x != null).map(Number).filter(x => x > 0);
+    save(); toast("Split saved");
+  }
+};
+
+/* ---------- actions ---------- */
+function arm(key) { if (UI.armed === key) { UI.armed = null; return true; } UI.armed = key; render(); setTimeout(() => { if (UI.armed === key) { UI.armed = null; render(); } }, 4000); return false; }
+function download(name, text, type) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function backupText() { const c = JSON.parse(JSON.stringify(S)); c.timer = null; c.format = "unity-backup"; c.exportedAt = new Date().toISOString(); return JSON.stringify(c); }
+function mergeById(a, b) { const m = new Map(a.map(x => [x.id, x])); for (const y of b || []) { const x = m.get(y.id); if (!x || (y.u || 0) > (x.u || 0)) m.set(y.id, y); } return [...m.values()]; }
+function importData(o, mode) {
+  if (!o || !Array.isArray(o.items) || !Array.isArray(o.sessions)) { toast("That file is not a UNITY backup."); return; }
+  if (mode === "replace") { const keepTimer = S.timer; S = o; S.timer = keepTimer; delete S.format; delete S.exportedAt; }
+  else {
+    for (const k of ["items", "sessions", "ideas", "proofs", "criteria"]) S[k] = mergeById(S[k], o[k]);
+    S.reviews = Object.assign({}, o.reviews, S.reviews);
+    if ((o.u || 0) > (S.u || 0)) { S.settings = o.settings; S.pause = o.pause; }
+  }
+  save(); render(); toast(mode === "replace" ? "Backup restored" : "Backups merged");
+}
+function editItemDlg(i) {
+  const isNew = !i, trId = isNew ? S.planTrack : i.tr;
+  const groups = [...new Set(S.items.filter(x => x.tr === trId).map(x => x.g))];
+  openDlg(`<h2>${isNew ? "Add an item to " + esc(track(trId).name) : "Edit item"}</h2>
+    <label>Title<input type="text" name="t" id="ei-t" value="${esc(i ? i.t : "")}" required maxlength="200"></label>
+    <div class="grid2"><label>Planned hours<input type="number" name="h" id="ei-h" min="0" max="500" step="0.5" value="${i ? i.h : 2}"></label>
+    <label>Group<input type="text" name="g" id="ei-g" list="ei-gl" value="${esc(i ? i.g : (groups[0] || "Added"))}" maxlength="80"><datalist id="ei-gl">${groups.map(g => `<option value="${esc(g)}"></option>`).join("")}</datalist></label></div>
+    ${isNew ? `<label>Where<select name="pos" id="ei-pos"><option value="end">End of the queue</option><option value="top">Top of the queue (do next)</option></select></label>` : `<label class="check"><input type="checkbox" name="c" id="ei-c"${i.c ? " checked" : ""}> The lesson for this item is written</label>`}
+    <label>Note<textarea name="n" id="ei-n">${esc(i ? i.n : "")}</textarea></label>
+    <div class="row"><button class="btn pri" type="submit">Save</button><button class="btn" type="button" data-act="dlg-close">Cancel</button>${i && i.id.startsWith("X.") ? `<button class="btn quiet danger" type="button" data-act="item-remove" data-it="${esc(i.id)}">Remove</button>` : ""}</div>`,
+    d => {
+      if (isNew) {
+        const q = S.items.filter(x => x.tr === trId), os = q.map(x => x.o), op = openItems(trId);
+        const o = d.pos === "top" ? (op.length ? op[0].o - 5 : 0) : (os.length ? Math.max(...os) + 10 : 10);
+        S.items.push(touch({ id: uid("X"), tr: trId, t: d.t.trim(), h: Math.max(0, +d.h || 0), g: (d.g || "Added").trim(), c: 1, src: "", n: (d.n || "").trim(), st: "open", o }));
+      } else { i.t = d.t.trim(); i.h = Math.max(0, +d.h || 0); i.g = (d.g || i.g).trim(); i.n = (d.n || "").trim(); i.c = d.c ? 1 : 0; touch(i); }
+      save();
+    });
+}
+function ideaDecide(id, kind) {
+  const idea = S.ideas.find(x => x.id === id); if (!idea) return;
+  const promote = kind === "promote";
+  const giveOpts = tr => `<option value="">Choose…</option><option value="__wait">Nothing is dropped: the whole queue waits</option>` + openItems(tr).slice(0, 4).map(i => `<option value="${esc(i.id)}">Set aside: ${esc(i.t.slice(0, 60))}</option>`).join("");
+  openDlg(`<h2>${promote ? "Promote this idea" : "Schedule this idea"}</h2><p class="lede">${esc(idea.text)}</p>
+    <label>Track<select name="tr" id="id-tr" data-chg="idea-track">${trackOpts("sw")}</select></label>
+    <div class="grid2"><label>Planned hours<input type="number" name="h" id="id-h" min="0" max="200" step="0.5" value="2"></label></div>
+    ${promote ? `<label>It goes to the top of the queue. What gives way?<select name="gave" id="id-gave" required>${giveOpts("sw")}</select></label>` : `<p class="lede">It joins the end of that queue, so nothing current moves.</p>`}
+    <div class="row"><button class="btn pri" type="submit">${promote ? "Promote" : "Schedule"}</button><button class="btn" type="button" data-act="dlg-close">Cancel</button></div>`,
+    d => {
+      const q = S.items.filter(x => x.tr === d.tr), op = openItems(d.tr);
+      const o = promote ? (op.length ? op[0].o - 5 : 0) : (q.length ? Math.max(...q.map(x => x.o)) + 10 : 10);
+      S.items.push(touch({ id: uid("X"), tr: d.tr, t: idea.text, h: Math.max(0, +d.h || 0), g: "From ideas", c: 1, src: "", n: "", st: "open", o }));
+      idea.st = promote ? "promoted" : "scheduled"; idea.tr = d.tr;
+      if (promote && d.gave && d.gave !== "__wait") { const g = item(d.gave); if (g) { g.st = "later"; touch(g); idea.gave = g.t; } }
+      else if (promote) idea.gave = "the queue waits";
+      touch(idea); save(); toast(promote ? "Promoted to the top" : "Scheduled");
+    });
+  UI.giveOpts = giveOpts;
+}
+const ACT = {
+  view(el) { S.view = el.dataset.v; save(); render(); window.scrollTo(0, 0); },
+  "dlg-close"() { closeDlg(); },
+  start(el) { const tr = el.dataset.tr, it = el.dataset.it; startTimer(tr, it, it ? "" : track(tr).label, false); },
+  stop() { closeSessionDlg(); },
+  "discard-timer"() { if (UI.armed !== "discard") { UI.armed = "discard"; toast("Press Discard again to throw this session away."); setTimeout(() => UI.armed = null, 4000); return; } UI.armed = null; S.timer = null; save(); closeDlg(); render(); },
+  past() { pastSessionDlg(); },
+  "off-plan"() {
+    openDlg(`<h2>Something not on the plan</h2><p class="lede">Fine to do. Name it so the week shows where the time went. If it can wait, park it instead.</p>
+      <label>What is it?<input type="text" name="label" id="op-l" required maxlength="120"></label>
+      <label>Closest track<select name="tr" id="op-tr">${trackOpts("sw")}</select></label>
+      <div class="row"><button class="btn pri" type="submit" name="go" value="start">Start the session</button><button class="btn" type="submit" name="go" value="park">Park it instead</button><button class="btn quiet" type="button" data-act="dlg-close">Cancel</button></div>`,
+      (d, f) => {
+        if (d.go === "park") { S.ideas.push(touch({ id: uid("I"), ts: Date.now(), text: d.label.trim(), st: "parked" })); save(); toast("Parked"); }
+        else { closeDlg(); startTimer(d.tr, null, d.label.trim(), true); return false; }
+      });
+  },
+  "open-plan"(el) { S.planTrack = el.dataset.tr; S.view = "plan"; UI.touchedG = false; save(); render(); window.scrollTo(0, 0); },
+  "plan-track"(el) { S.planTrack = el.dataset.tr; UI.touchedG = false; UI.openI = null; save(); render(); },
+  "add-item"() { editItemDlg(null); },
+  "item-edit"(el) { editItemDlg(item(el.dataset.it)); },
+  "item-remove"(el) { const i = item(el.dataset.it); if (i) { i.st = "removed"; touch(i); save(); } closeDlg(); render(); },
+  "item-done"(el) { const i = item(el.dataset.it); if (!i) return; i.st = "done"; i.doneAt = todayIso(); touch(i); save(); render(); toast("Done. Next item is up."); },
+  "item-reopen"(el) { const i = item(el.dataset.it); if (!i) return; i.st = "open"; touch(i); save(); render(); },
+  "item-aside"(el) { const i = item(el.dataset.it); if (!i) return; i.st = "later"; touch(i); save(); render(); toast("Set aside. It stays in the plan."); },
+  "item-top"(el) { const i = item(el.dataset.it), op = openItems(i.tr); if (op[0] && op[0].id !== i.id) { i.o = op[0].o - 5; touch(i); save(); } render(); toast("Moved to the top"); },
+  "item-move"(el) {
+    const i = item(el.dataset.it), op = openItems(i.tr), k = op.findIndex(x => x.id === i.id), j = k + (+el.dataset.dir);
+    if (k < 0 || j < 0 || j >= op.length) return;
+    const o = op[j].o; op[j].o = i.o; i.o = o; touch(i); touch(op[j]); save(); render();
+  },
+  "idea-promote"(el) { ideaDecide(el.dataset.id, "promote"); },
+  "idea-schedule"(el) { ideaDecide(el.dataset.id, "schedule"); },
+  "idea-drop"(el) { const i = S.ideas.find(x => x.id === el.dataset.id); i.st = "dropped"; touch(i); save(); render(); },
+  "idea-restore"(el) { const i = S.ideas.find(x => x.id === el.dataset.id); i.st = "parked"; touch(i); save(); render(); },
+  "crit-del"(el) { const c = S.criteria.find(x => x.id === el.dataset.id); c.del = 1; touch(c); save(); render(); },
+  "del-session"(el) { if (!arm(el.dataset.id)) return; const s = S.sessions.find(x => x.id === el.dataset.id); s.del = 1; touch(s); save(); render(); },
+  "reopen-week"() { delete S.reviews[monday(todayIso())]; save(); render(); },
+  "end-pause"() { if (S.pause) { const p = S.pause, y = addDays(todayIso(), -1); S.pauses.push({ ...p, until: p.until < todayIso() ? p.until : y }); S.pause = null; save(); render(); toast("Full plan resumed"); } },
+  export() { download(`unity-backup-${todayIso()}.json`, backupText(), "application/json"); S.lastExport = Date.now(); save(); render(); },
+  "export-csv"() {
+    const rows = [["event_id", "type", "ref_id", "track", "title", "date", "hours", "ai_mode", "off_plan", "note"]];
+    live().slice().sort((a, b) => a.ts - b.ts).forEach((s, n) => rows.push(["UNI.EVT-" + String(n + 1).padStart(6, "0"), "study_session", s.it || "", s.tr, sessionLabel(s), s.d, (s.m / 60).toFixed(2), s.mode ?? "", s.off ? "yes" : "", s.note || ""]));
+    download(`unity-sessions-${todayIso()}.csv`, rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n"), "text/csv");
+  },
+  "copy-backup"() { const t = backupText(); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Backup copied")).catch(() => toast("Copy was blocked. Use Export backup.")); },
+  import(el) {
+    const f = $("#imp-file").files[0], mode = el.dataset.mode; if (!f) { toast("Choose a backup file first."); return; }
+    if (mode === "replace" && !arm("replace")) return;
+    const r = new FileReader(); r.onload = () => { try { importData(JSON.parse(r.result), mode); } catch (e) { toast("That file could not be read."); } }; r.readAsText(f);
+  },
+  persist() { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(ok => toast(ok ? "The browser will keep this data." : "Not granted. Install the app, and keep exporting backups.")); else toast("Not supported in this browser."); },
+  reset() { if (!arm("reset")) return; S = fresh(); save(); render(); toast("Plan reloaded"); }
+};
+document.addEventListener("click", e => { const el = e.target.closest("[data-act]"); if (!el) return; const fn = ACT[el.dataset.act]; if (fn) { if (el.tagName === "BUTTON" && el.type !== "submit") e.preventDefault(); fn(el, e); } });
+document.addEventListener("change", e => {
+  const el = e.target, k = el.dataset && el.dataset.chg; if (!k) return;
+  if (k === "show-done") { UI.showDone = el.checked; render(); }
+  else if (k === "past-track") { $("#p-it").innerHTML = itemOpts(el.value); }
+  else if (k === "idea-track") { const g = $("#id-gave"); if (g && UI.giveOpts) g.innerHTML = UI.giveOpts(el.value); }
+  else if (k === "proof-done") { const p = S.proofs.find(x => x.id === el.dataset.id); p.done = el.checked ? 1 : 0; touch(p); save(); render(); }
+  else if (k === "proof-ev") { const p = S.proofs.find(x => x.id === el.dataset.id); p.ev = el.value.trim(); touch(p); save(); }
+  else if (k === "crit-done") { const c = S.criteria.find(x => x.id === el.dataset.id); c.done = el.checked ? 1 : 0; touch(c); save(); render(); }
+});
+document.addEventListener("toggle", e => {
+  const el = e.target; if (!el.matches) return;
+  if (el.matches("details.grp")) { const k = el.dataset.g; if (el.open === UI.openG.has(k)) return; UI.touchedG = true; el.open ? UI.openG.add(k) : UI.openG.delete(k); render(); }
+  else if (el.matches("details.item")) { const id = el.dataset.i; if (el.open && UI.openI !== id) { UI.openI = id; render(); } else if (!el.open && UI.openI === id) { UI.openI = null; render(); } }
+}, true);
+$("#dlg").addEventListener("cancel", () => { dlgSubmit = null; });
+document.addEventListener("visibilitychange", () => { if (document.hidden && S) { clearTimeout(saveT); DB.put(S); } else if (S) render(); });
+
+/* ---------- boot ---------- */
+(async function boot() {
+  await DB.open();
+  const prev = await DB.get();
+  S = prev && Array.isArray(prev.items) ? prev : fresh();
+  if (!prev) DB.put(S);
+  // New seed items added in a later version are appended without touching existing data.
+  const have = new Set(S.items.map(i => i.id));
+  for (const x of SEED.items) if (!have.has(x.id)) S.items.push({ ...x, u: 0 });
+  for (const tr of SEED.tracks) if (!(tr.id in S.settings.targets)) S.settings.targets[tr.id] = tr.target;
+  render();
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>

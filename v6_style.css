@@ -1,0 +1,51 @@
+
+/* ===== 1.5: Plan page: folder tabs, three-view summary, stage board ===== */
+.ftabs{display:flex;gap:4px;align-items:flex-end;padding:0 14px;overflow-x:auto;scrollbar-width:none;margin-bottom:-17px;position:relative;z-index:1}
+.ftabs::-webkit-scrollbar{display:none}
+.ftab{display:flex;align-items:center;gap:8px;flex:none;border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;padding:9px 16px 10px;background:var(--inner);color:var(--muted);font-size:14px;font-weight:500;white-space:nowrap}
+.ftab svg{color:var(--tc)}
+.ftab:hover{color:var(--ink)}
+.ftab[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:600;padding-top:8px;box-shadow:inset 0 3px 0 var(--tc);padding-bottom:12px}
+.folder{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow);min-width:0;flex:1}
+.seg{display:flex;background:var(--sunk);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 13px;border-radius:9px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.psum{display:flex;flex-direction:column;gap:14px;min-width:0}
+.psum .stat{background:var(--sunk);border-color:transparent}
+.pd2{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.nextbox{border:1px solid var(--line);border-radius:15px;padding:15px 16px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--tc) 6%,transparent)}
+.sbars{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.sbars .wkrow{grid-template-columns:minmax(120px,1.1fr) 2fr 92px}
+.road{display:flex;overflow-x:auto;padding:4px 2px 8px}
+.step{flex:1 0 176px;position:relative;padding-right:16px;display:flex;flex-direction:column;gap:8px}
+.step::before{content:"";position:absolute;top:16px;left:40px;right:4px;height:2px;border-radius:1px;background:var(--line)}
+.step:last-child::before{display:none}
+.step.done::before{background:var(--tc)}
+.node{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;border:2px solid var(--line);background:var(--card);color:var(--muted);position:relative}
+.step.done .node{background:var(--tc);border-color:var(--tc);color:var(--card)}
+.step.cur .node{border-color:var(--tc);color:var(--tc);box-shadow:0 0 0 4px color-mix(in srgb,var(--tc) 18%,transparent)}
+.step b{font-size:14px;line-height:1.25}
+.step .bar{max-width:150px}
+pre.md{margin:0;font:12.5px/1.6 var(--mono);max-height:340px;overflow:auto;background:var(--sunk);border-radius:13px;padding:14px 16px;white-space:pre-wrap;word-break:break-word}
+.board{display:flex;gap:12px;overflow-x:auto;align-items:flex-start;padding-bottom:8px;min-width:0}
+.col{flex:1 0 330px;max-width:520px;min-width:0;border-radius:17px;background:var(--sunk);padding:10px;display:flex;flex-direction:column;gap:8px;border:1px solid transparent}
+.col.cur{border-color:color-mix(in srgb,var(--tc) 55%,transparent)}
+.col-h{display:flex;flex-direction:column;gap:8px;padding:4px 6px 2px}
+.col-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border:0;background:none;padding:0;text-align:left;width:100%;color:var(--ink)}
+.col-n{font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+.col.shut{flex:0 0 54px;max-width:54px;align-self:stretch;min-height:150px}
+.col.shut .col-t{writing-mode:vertical-rl;justify-content:flex-start;gap:12px;align-items:center;white-space:nowrap}
+.col.shut .bar{display:none}
+.col details.grp{border-radius:13px;box-shadow:none}
+.col details.grp>summary{padding:10px 13px;font-size:13.5px}
+.col details.item>summary{padding:9px 13px}
+.col .item .acts{padding:4px 13px 12px 13px}
+@media (min-width:900px){.pd2{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}}
+@media (min-width:1100px){main[data-view="plan"]{max-width:none;min-height:calc(100vh - 92px)}}
+@media (max-width:700px){
+  .board{flex-direction:column;overflow:visible}
+  .col,.col.shut{flex:none;width:100%;max-width:none;min-height:0}
+  .col.shut .col-t{writing-mode:horizontal-tb;justify-content:space-between}
+  .folder{padding:14px}
+  .seg button{padding:6px 9px}
+}
