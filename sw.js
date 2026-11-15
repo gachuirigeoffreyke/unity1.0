@@ -1,7 +1,8 @@
 /* UNITY offline cache. Network first, so updates arrive when online; cache when offline. */
-const CACHE = "unity-v12";
+const CACHE = "unity-v14";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "inter.woff2",
   "lib/marked.min.js", "lib/katex.min.js",
+  "volumes/THE_FRAME_V0_Navigator.md", "volumes/THE_FRAME_V1_Principles_and_Evidence.md", "volumes/THE_FRAME_V2_Phase_I_120-Day_Build.md",
   "volumes/FSE-C01-Workbench.md", "volumes/FSE-C02a-Python.md", "volumes/FSE-C11a-CSFoundations.md", "volumes/STR-V01-Mechanics-Maths.md"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
